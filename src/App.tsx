@@ -17,7 +17,7 @@ const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000") + "/ap
 
 export default function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
-  const [user, setUser] = useState<any>(JSON.parse(localStorage.getItem("user") || "null"));
+  const [user, setUser] = useState<any>((() => { try { const v = localStorage.getItem("user"); return v && v !== "undefined" ? JSON.parse(v) : null; } catch { localStorage.removeItem("user"); localStorage.removeItem("token"); return null; } })());
   const [activeTab, setActiveTab] = useState<"overview" | "accounts" | "payments" | "cards" | "capital" | "ledger" | "team">("overview");
   const [showAuth, setShowAuth] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
