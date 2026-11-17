@@ -22,6 +22,10 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [otpRequired, setOtpRequired] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [otpPurpose, setOtpPurpose] = useState<"SIGNUP" | "LOGIN">("LOGIN");
+  const [otpMessage, setOtpMessage] = useState("");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -87,6 +91,46 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
       setLoading(false);
     }
   };
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const res = await fetch((import.meta.env.VITE_API_URL || "http://localhost:5000") + '/api/users/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: otpCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Invalid verification code');
+      onSuccessAuth(data.token, data.user);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setError('');
+    setOtpMessage('');
+    setLoading(true);
+    try {
+      const res = await fetch((import.meta.env.VITE_API_URL || "http://localhost:5000") + '/api/users/resend-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, purpose: otpPurpose }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to resend code');
+      setOtpMessage(data.message || 'A new 6-digit code has been sent.');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-slate-900 flex flex-col">
       <header className="bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between">
