@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { CreditCard } from "lucide-react";
@@ -9,6 +9,15 @@ function CheckoutForm({ wallets, token, onSuccess, onMessage }: any) {
   const stripe = useStripe();
   const elements = useElements();
   const [accountId, setAccountId] = useState(wallets[0]?.id || "");
+
+  useEffect(() => {
+    if (wallets && wallets.length > 0 && !accountId) {
+      const primary =
+        wallets.find((w: any) => w.account_name?.toLowerCase().includes("everyday")) ||
+        wallets[0];
+      setAccountId(primary.id);
+    }
+  }, [wallets, accountId]);
   const [amount, setAmount] = useState("");
   const [processing, setProcessing] = useState(false);
 

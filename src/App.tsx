@@ -47,7 +47,7 @@ export default function App() {
     } finally { setLoading(false); }
   };
 
-  useEffect(() => { if (token && user) fetchDashboard(); }, [token]);
+  useEffect(() => { if (token && user?.id) fetchDashboard(); }, [token, user?.id]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
