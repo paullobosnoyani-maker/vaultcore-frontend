@@ -55,6 +55,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
+      if (data.requiresOtp) { setOtpPurpose("LOGIN"); setOtpMessage(data.message || ""); setOtpRequired(true); return; }
       onSuccessAuth(data.token, data.user);
     } catch (err: any) {
       setError(err.message);
@@ -84,6 +85,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Registration failed");
+      if (data.requiresOtp) { setOtpPurpose("SIGNUP"); setOtpMessage(data.message || ""); setOtpRequired(true); return; }
       onSuccessAuth(data.token, data.user);
     } catch (err: any) {
       setError(err.message);
