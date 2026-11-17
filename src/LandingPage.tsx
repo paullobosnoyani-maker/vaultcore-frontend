@@ -506,7 +506,10 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
             <div className="flex flex-wrap gap-6 font-semibold text-slate-600">
               <a href="#infrastructure" className="hover:text-rose-800">Banking Disclosures</a>
               <a href="#security" className="hover:text-rose-800">Security &amp; CIP</a>
-              <a href="#faq" className="hover:text-rose-800">Fee Schedule &amp; FAQ</a>
+              <button type="button" onClick={() => navigateTo("fees")} className="hover:text-rose-800 cursor-pointer">Fee Schedule</button>
+              <button type="button" onClick={() => navigateTo("terms")} className="hover:text-rose-800 cursor-pointer">Terms of Service</button>
+              <button type="button" onClick={() => navigateTo("privacy")} className="hover:text-rose-800 cursor-pointer">Privacy Policy</button>
+              <button type="button" onClick={() => navigateTo("esign")} className="hover:text-rose-800 cursor-pointer">E-Sign Consent</button>
               <button onClick={() => setChatOpen(true)} className="hover:text-rose-800 cursor-pointer">Contact Support</button>
             </div>
           </div>

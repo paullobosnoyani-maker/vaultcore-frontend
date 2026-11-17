@@ -198,6 +198,64 @@ export function SubPages({ page, onBack, onOpenAuth }: SubPageProps) {
         </div>
       )}
 
+      {page === "terms" && (
+        <div className="space-y-6 max-w-4xl">
+          <div className="text-xs font-bold uppercase tracking-widest text-rose-800">Legal Agreement</div>
+          <h1 className="text-3xl font-bold text-slate-950">Platform Terms of Service</h1>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p><strong>1. Non-Bank Financial Technology Status:</strong> VaultCore Financial Technologies Inc. ("VaultCore") is a financial technology company, not a chartered bank or depository institution. Banking services, custodial accounts, and payment rails are provided through licensed third-party banking and payment partners.</p>
+            <p><strong>2. Eligibility & CIP/KYC Verification:</strong> Accounts are available strictly to verified US individuals and registered US business entities. You authorize VaultCore and its partners to verify your identity, SSN/EIN, and beneficial ownership under the USA PATRIOT Act (31 CFR 1020.220).</p>
+            <p><strong>3. Electronic Ledger & Transfers:</strong> Internal wallet balances reflect atomic ledger entries backed by custodial USD funds. ACH transfers, card deposits, and payouts are subject to settlement timelines, fraud screening, and OFAC sanctions compliance.</p>
+            <p><strong>4. Governing Law & Arbitration:</strong> Disputes arising under these Terms are governed by the laws of the State of Delaware and resolved via binding arbitration.</p>
+          </div>
+        </div>
+      )}
+
+      {page === "privacy" && (
+        <div className="space-y-6 max-w-4xl">
+          <div className="text-xs font-bold uppercase tracking-widest text-rose-800">Data Governance & GLBA</div>
+          <h1 className="text-3xl font-bold text-slate-950">Privacy Policy & Gramm-Leach-Bliley Notice</h1>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p><strong>1. Information We Collect:</strong> We collect Customer Identification Program (CIP) records (legal name, date of birth, US street address, SSN/EIN), authentication logs, and transaction ledger records required by federal anti-money laundering (AML) regulations.</p>
+            <p><strong>2. How We Use & Share Data:</strong> We never sell your personal or financial information. Data is shared strictly with regulated banking partners, payment processors (such as Stripe), identity verification vendors, and regulatory authorities as required by law.</p>
+            <p><strong>3. Encryption & Retention:</strong> All sensitive data is encrypted in transit via TLS 1.3 and at rest using AES-256. Federal Bank Secrecy Act (BSA) rules require retention of CIP and ledger records for at least 5 years after account closure.</p>
+          </div>
+        </div>
+      )}
+
+      {page === "esign" && (
+        <div className="space-y-6 max-w-4xl">
+          <div className="text-xs font-bold uppercase tracking-widest text-rose-800">15 U.S.C. 7001 Disclosure</div>
+          <h1 className="text-3xl font-bold text-slate-950">Electronic Communications (E-Sign) Consent</h1>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p><strong>1. Scope of Consent:</strong> By opening an account or signing in electronically, you consent to receive all account agreements, monthly statements, 1099-INT tax forms, security OTP codes, and regulatory disclosures electronically.</p>
+            <p><strong>2. Hardware & Software Requirements:</strong> Accessing electronic records requires a modern web browser supporting TLS 1.2+, a valid email address, and PDF viewing capability.</p>
+            <p><strong>3. Withdrawing Consent:</strong> You may withdraw E-Sign consent at any time by contacting support, which may result in closure of your online treasury account.</p>
+          </div>
+        </div>
+      )}
+
+      {page === "fees" && (
+        <div className="space-y-6 max-w-4xl">
+          <div className="text-xs font-bold uppercase tracking-widest text-rose-800">Truth in Savings & Fee Transparency</div>
+          <h1 className="text-3xl font-bold text-slate-950">Schedule of Fees & Limits</h1>
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-slate-600 text-xs uppercase border-b border-slate-200">
+                <tr><th className="px-6 py-3">Service / Transaction</th><th className="px-6 py-3">Fee</th><th className="px-6 py-3">Notes / Limits</th></tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                <tr><td className="px-6 py-3 font-medium">Monthly Account Maintenance</td><td className="px-6 py-3 font-bold text-rose-800">$0.00</td><td className="px-6 py-3">Includes Everyday, Savings, & Reserve wallets</td></tr>
+                <tr><td className="px-6 py-3 font-medium">Standard Domestic ACH Transfer</td><td className="px-6 py-3 font-bold text-rose-800">$0.00</td><td className="px-6 py-3">1–3 business days settlement</td></tr>
+                <tr><td className="px-6 py-3 font-medium">Internal Member-to-Member P2P</td><td className="px-6 py-3 font-bold text-rose-800">$0.00</td><td className="px-6 py-3">Instant atomic ledger settlement</td></tr>
+                <tr><td className="px-6 py-3 font-medium">Card / Instant Funding</td><td className="px-6 py-3 font-bold text-rose-800">2.9% + $0.30</td><td className="px-6 py-3">Pass-through card network processing fee</td></tr>
+                <tr><td className="px-6 py-3 font-medium">Returned ACH / Insufficient Funds</td><td className="px-6 py-3 font-bold text-rose-800">$15.00</td><td className="px-6 py-3">Assessed only on failed external pull attempts</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {page === "faq" && (
         <div className="space-y-6 max-w-4xl">
           <div className="text-xs font-bold uppercase tracking-widest text-rose-800">Regulatory &amp; Operational FAQ</div>
