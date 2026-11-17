@@ -128,7 +128,53 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
               </div>
             )}
 
-            {isLogin ? (
+            {otpRequired ? (
+          <form onSubmit={handleVerifyOtp} className="space-y-5 max-w-md mx-auto">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-700">
+              {otpMessage || `We sent a 6-digit verification code to ${email}.`}
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                6-Digit Verification Code
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="\d{6}"
+                maxLength={6}
+                required
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                placeholder="123456"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-center text-2xl font-mono tracking-[0.5em] focus:outline-none focus:border-rose-800"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading || otpCode.length !== 6}
+              className="w-full bg-rose-800 hover:bg-rose-900 disabled:opacity-50 text-white font-semibold py-3.5 rounded-xl text-sm transition cursor-pointer"
+            >
+              {loading ? "Verifying Code..." : "Verify & Continue to Treasury"}
+            </button>
+            <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+              <button
+                type="button"
+                onClick={() => { setOtpRequired(false); setOtpCode(""); setError(""); }}
+                className="hover:text-slate-800 underline cursor-pointer"
+              >
+                Change Email
+              </button>
+              <button
+                type="button"
+                disabled={loading}
+                onClick={handleResendOtp}
+                className="text-rose-800 hover:text-rose-900 font-semibold underline cursor-pointer"
+              >
+                Resend 6-Digit Code
+              </button>
+            </div>
+          </form>
+        ) : isLogin ? (
               <form onSubmit={handleLogin} className="space-y-5 max-w-md mx-auto">
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Work Email Address</label>
