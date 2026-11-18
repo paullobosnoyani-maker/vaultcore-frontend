@@ -73,19 +73,21 @@ function CheckoutForm({ wallets, token, onSuccess, onMessage }: any) {
     }
   };
 
-  return (
-    <form onSubmit={handleStripeDeposit} className="space-y-4">
-      <div>
-        <label className="block text-xs text-slate-600 mb-1">Destination Wallet</label>
-        <select
-          value={accountId || wallets[0]?.id}
-          onChange={(e) => setAccountId(e.target.value)}
-          className="w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg px-3 py-2 text-sm"
-        >
-          {wallets.map((w: any) => (
-            <option key={w.id} value={w.id}>{w.account_name}</option>
-          ))}
-        </select>
+ <select
+  value={accountId || wallets[0]?.id || ""}
+  onChange={(e) => setAccountId(e.target.value)}
+  className="w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg px-3 py-2 text-sm"
+>
+  {wallets.length === 0 && (
+    <option value="">Everyday Operating Checking ($0.00)</option>
+  )}
+  {wallets.map((w: any) => (
+    <option key={w.id} value={w.id}>
+      {w.account_name} (${parseFloat(w.balance || "0").toFixed(2)})
+    </option>
+  ))}
+</select>
+  
       </div>
       <div>
         <label className="block text-xs text-slate-600 mb-1">Amount (USD)</label>
