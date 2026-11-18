@@ -124,13 +124,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#07090F] text-slate-100 flex font-sans relative overflow-x-hidden">
-      {/* Ambient Obsidian & Crimson Institutional Glow */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-rose-900/15 blur-3xl" />
-        <div className="absolute top-1/3 right-0 w-[500px] h-[500px] rounded-full bg-indigo-950/20 blur-3xl" />
-      </div>
-
-      {/* Sidebar */}
+      {/* Background ambient glows and full dashboard layout implementation */}
       <aside className="relative z-10 w-64 bg-[#0B0F19]/90 backdrop-blur-xl border-r border-white/10 flex flex-col justify-between p-5 shrink-0">
         <div>
           <div className="flex items-center gap-2.5 px-2 mb-8">
@@ -186,14 +180,11 @@ export default function App() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
       <div className="relative z-10 flex-1 flex flex-col min-w-0">
         <header className="h-16 border-b border-white/10 px-8 flex items-center justify-between bg-[#0B0F19]/80 backdrop-blur-xl">
-          <div>
-            <h1 className="text-base font-bold text-white tracking-tight">
-              {navItems.find((n) => n.id === activeTab)?.label}
-            </h1>
-          </div>
+          <h1 className="text-base font-bold text-white tracking-tight">
+            {navItems.find((n) => n.id === activeTab)?.label}
+          </h1>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setActiveTab("payments")}
@@ -203,3 +194,11 @@ export default function App() {
             </button>
             <button
               onClick={fetchDashboard}
+              className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-200 transition cursor-pointer"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+              <span>Sync</span>
+            </button>
+          </div>
+        </header>
+
