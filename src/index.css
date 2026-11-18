@@ -105,3 +105,18 @@ aside .border-slate-200,
 header .border-slate-200 {
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
+/* Fix select dropdown rendering & darken CIP alert banner */
+select {
+  background-color: #111827 !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  height: 42px !important;
+  line-height: 1.5 !important;
+  overflow: hidden !important;
+}
+
+main .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  color: #fde68a !important;
+}
