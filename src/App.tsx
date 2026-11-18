@@ -209,8 +209,10 @@ export default function App() {
               </div>
               <form onSubmit={submitTransfer} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 max-w-xl">
                 <h2 className="text-sm font-bold text-slate-950">Instant Sub-Account Rebalance</h2>
-                <select value={senderId} onChange={(e) => setSenderId(e.target.value)} className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs">{wallets.map((w) => <option key={w.id} value={w.id}>{w.account_name}</option>)} </select>
-                <select value={receiverId} onChange={(e) => setReceiverId(e.target.value)} className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs">{wallets.map((w) => <option key={w.id} value={w.id}>{w.account_name}</option>)} </select>
+                <select value={senderId} onChange={(e) => setSenderId(e.target.value)} className="w-full rounded-xl px-3 py-2.5 text-xs"><option value="">From: Everyday Operating Checking ($0.00)</option>{wallets.map((w) => <option key={w.id} value={w.id}>{w.account_name}</option>)}</select>
+                <select value={receiverId} onChange={(e) => setReceiverId(e.target.value)} className="w-full rounded-xl px-3 py-2.5 text-xs"><option value="">To: Treasury Yield Reserve ($0.00)</option>{wallets.map((w) => <option key={w.id} value={w.id}>{w.account_name}</option>)}</select>
+
+                
                 <input type="number" step="0.01" min="1" required value={transferAmount} onChange={(e) => setTransferAmount(e.target.value)} placeholder="Amount (USD)" className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs" />
                 <button type="submit" className="w-full bg-rose-800 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer">Execute Treasury Allocation</button>
               </form>
