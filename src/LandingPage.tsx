@@ -158,7 +158,8 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
         <>
 
 
-      <section className="bg-gradient-to-br from-[#060C1A] via-[#0E1E3F] to-[#1E3A6E] text-white pt-16 pb-24 overflow-hidden">
+      <section className="relative bg-[#060C1A] text-white pt-16 pb-28 overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(190,18,60,0.22),_transparent_55%),radial-gradient(ellipse_at_bottom_left,_rgba(30,58,138,0.35),_transparent_60%)]" />
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-5">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 text-slate-200 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
@@ -175,18 +176,34 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
               Commercial checking, EMV corporate cards, automated bill pay, 4.85% APY* treasury sweep, and double-entry accounting. All in one place.
             </p>
 
-            <div className="bg-white p-1.5 rounded-xl flex items-center shadow-2xl max-w-md mb-4">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-1.5 rounded-xl flex items-center shadow-2xl max-w-md mb-5">
               <input
                 type="email"
-                placeholder="What&apos;s your work email?"
-                className="flex-1 bg-transparent px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                placeholder="Enter your work email..."
+                className="flex-1 bg-transparent px-3.5 py-2.5 text-sm text-white placeholder:text-slate-400 focus:outline-none"
               />
               <button
                 onClick={() => onOpenAuth(false)}
-                className="bg-rose-800 hover:bg-rose-900 text-white font-semibold text-xs sm:text-sm px-5 py-3 rounded-lg shrink-0 transition cursor-pointer"
+                className="bg-rose-700 hover:bg-rose-600 text-white font-semibold text-xs sm:text-sm px-5 py-3 rounded-lg shrink-0 shadow-lg shadow-rose-950/50 transition cursor-pointer flex items-center gap-1.5"
               >
-                Get started
+                <span>Open Account</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-5 mb-4 max-w-md">
+              <div>
+                <div className="text-sm font-bold text-white">Bank-Grade</div>
+                <div className="text-[11px] text-slate-400">CIP &amp; OFAC Screened</div>
+              </div>
+              <div>
+                <div className="text-sm font-bold text-white">256-Bit TLS</div>
+                <div className="text-[11px] text-slate-400">6-Digit OTP Protected</div>
+              </div>
+              <div>
+                <div className="text-sm font-bold text-white">24/7 Desk</div>
+                <div className="text-[11px] text-slate-400">Real-Time Ledger</div>
+              </div>
             </div>
 
             <p className="text-[11px] text-slate-400 leading-relaxed">
@@ -271,6 +288,38 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-6 -mt-12 relative z-20 mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xl shadow-slate-900/5 hover:-translate-y-1 transition-all duration-200">
+            <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-800 flex items-center justify-center mb-4">
+              <Lock className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-950 mb-1.5">256-Bit Encrypted Ledger</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Every ACH transfer, card authorization, and internal sub-wallet allocation is protected by TLS 1.3 encryption and 6-digit Email OTP verification.
+            </p>
+          </div>
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xl shadow-slate-900/5 hover:-translate-y-1 transition-all duration-200">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-950 mb-1.5">Credit &amp; Grant Reserve</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Ring-fence non-dilutive grant capital and working credit lines in dedicated USD reserve accounts with automated audit trails.
+            </p>
+          </div>
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-xl shadow-slate-900/5 hover:-translate-y-1 transition-all duration-200">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-950 mb-1.5">Custodial Partner Safety</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Client funds are held in segregated custodial accounts at regulated US partner banks, never commingled with corporate operating balances.
+            </p>
           </div>
         </div>
       </section>
