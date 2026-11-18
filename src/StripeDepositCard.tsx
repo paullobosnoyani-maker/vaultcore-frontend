@@ -29,9 +29,7 @@ function CheckoutForm({ wallets = [], token, onSuccess, onMessage }: any) {
 
     try {
       const targetWalletId = accountId || wallets.at(0)?.id;
-      if (!targetWalletId) {
-        throw new Error("Please click Sync at the top right to load your wallet first.");
-      }
+      
 
       const intentRes = await fetch((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/users/stripe/create-intent", {
         method: "POST",
