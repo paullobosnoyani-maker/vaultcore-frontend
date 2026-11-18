@@ -4,11 +4,13 @@ import { Elements, CardElement, useStripe, useElements } from "@stripe/react-str
 import { CreditCard } from "lucide-react";
 
 const stripePromise = loadStripe("pk_test_51UbHXdAt0D5TFE2UEq368uqN36rduEhsfl0NSFYrcKdlQrUkAAGyfBhsnZcL2nEuKMh51ZdcLsgsEUAmgf3xgINm00D9j84Doq");
- 
-function CheckoutForm({ wallets, token, onSuccess, onMessage }: any) {
+
+function CheckoutForm({ wallets = [], token, onSuccess, onMessage }: any) {
   const stripe = useStripe();
   const elements = useElements();
   const [accountId, setAccountId] = useState(wallets[0]?.id || "");
+  const [amount, setAmount] = useState("");
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     if (wallets && wallets.length > 0 && !accountId) {
@@ -18,8 +20,6 @@ function CheckoutForm({ wallets, token, onSuccess, onMessage }: any) {
       setAccountId(primary.id);
     }
   }, [wallets, accountId]);
-  const [amount, setAmount] = useState("");
-  const [processing, setProcessing] = useState(false);
 
   const handleStripeDeposit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,21 +73,24 @@ function CheckoutForm({ wallets, token, onSuccess, onMessage }: any) {
     }
   };
 
- <select
-  value={accountId || wallets[0]?.id || ""}
-  onChange={(e) => setAccountId(e.target.value)}
-  className="w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg px-3 py-2 text-sm"
->
-  {wallets.length === 0 && (
-    <option value="">Everyday Operating Checking ($0.00)</option>
-  )}
-  {wallets.map((w: any) => (
-    <option key={w.id} value={w.id}>
-      {w.account_name} (${parseFloat(w.balance || "0").toFixed(2)})
-    </option>
-  ))}
-</select>
-  
+  return (
+    <form onSubmit={handleStripeDeposit} className="space-y-4">
+      <div>
+        <label className="block text-xs text-slate-600 mb-1">Destination Wallet</label>
+        <select
+          value={accountId || wallets[0]?.id || ""}
+          onChange={(e) => setAccountId(e.target.value)}
+          className="w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg px-3 py-2 text-sm"
+        >
+          {wallets.length === 0 && (
+            <option value="">Everyday Operating Checking ($0.00)</option>
+          )}
+          {wallets.map((w: any) => (
+            <option key={w.id} value={w.id}>
+              {w.account_name} (${parseFloat(w.balance || "0").toFixed(2)})
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label className="block text-xs text-slate-600 mb-1">Amount (USD)</label>
@@ -132,4 +135,3 @@ export function StripeDepositCard(props: any) {
     </div>
   );
 }
-
