@@ -8,7 +8,7 @@ const stripePromise = loadStripe("pk_test_51UbHXdAt0D5TFE2UEq368uqN36rduEhsfl0NS
 function CheckoutForm({ wallets = [], token, onSuccess, onMessage }: any) {
   const stripe = useStripe();
   const elements = useElements();
-  const [accountId, setAccountId] = useState(wallets[0]?.id || "");
+  const [accountId, setAccountId] = useState(wallets.at(0)?.id || "");
   const [amount, setAmount] = useState("");
   const [processing, setProcessing] = useState(false);
 
@@ -16,8 +16,8 @@ function CheckoutForm({ wallets = [], token, onSuccess, onMessage }: any) {
     if (wallets && wallets.length > 0 && !accountId) {
       const primary =
         wallets.find((w: any) => w.account_name?.toLowerCase().includes("everyday")) ||
-        wallets[0];
-      setAccountId(primary.id);
+        wallets.at(0);
+      if (primary?.id) setAccountId(primary.id);
     }
   }, [wallets, accountId]);
 
@@ -28,6 +28,11 @@ function CheckoutForm({ wallets = [], token, onSuccess, onMessage }: any) {
     onMessage("");
 
     try {
+      const targetWalletId = accountId || wallets.at(0)?.id;
+      if (!targetWalletId) {
+        throw new Error("Please click Sync at the top right to load your wallet first.");
+      }
+
       const intentRes = await fetch((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/users/stripe/create-intent", {
         method: "POST",
         headers: {
@@ -55,7 +60,7 @@ function CheckoutForm({ wallets = [], token, onSuccess, onMessage }: any) {
           },
           body: JSON.stringify({
             paymentIntentId: paymentIntent.id,
-            accountId: accountId || wallets[0]?.id,
+            accountId: targetWalletId,
           }),
         });
         const confirmData = await confirmRes.json();
@@ -78,7 +83,7 @@ function CheckoutForm({ wallets = [], token, onSuccess, onMessage }: any) {
       <div>
         <label className="block text-xs text-slate-600 mb-1">Destination Wallet</label>
         <select
-          value={accountId || wallets[0]?.id || ""}
+          value={accountId || wallets.at(0)?.id || ""}
           onChange={(e) => setAccountId(e.target.value)}
           className="w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg px-3 py-2 text-sm"
         >
