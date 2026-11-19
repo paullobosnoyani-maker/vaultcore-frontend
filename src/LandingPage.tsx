@@ -87,9 +87,7 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
               <button type="button" onMouseEnter={() => setActiveMenu(null)} onClick={() => navigateTo("comparison")} className="px-3.5 py-2 text-slate-300 hover:text-white">Compare</button>
               <button type="button" onMouseEnter={() => setActiveMenu(null)} onClick={() => navigateTo("faq")} className="px-3.5 py-2 text-slate-300 hover:text-white">FAQ</button>
             </div>
-          </div>
-
-          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
             <button onClick={() => onOpenAuth(true)} className="text-xs sm:text-sm font-semibold text-white border border-white/20 hover:bg-white/10 px-4 py-2 rounded-lg cursor-pointer">Sign in</button>
             <button onClick={() => onOpenAuth(false)} className="bg-rose-700 hover:bg-rose-600 text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-lg cursor-pointer">Open Account</button>
           </div>
