@@ -306,10 +306,17 @@ export default function App() {
           )}
 
           {actionMessage && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-900 px-4 py-3 rounded-xl text-xs font-semibold">
-              {actionMessage}
-            </div>
-          )}
+        <div className="bg-[#111827] border border-emerald-500/40 text-emerald-300 px-4 py-3 rounded-xl text-xs font-semibold flex items-center justify-between gap-3 shadow-md">
+        <span>{actionMessage}</span>
+        <button
+      type="button"
+      onClick={() => setActionMessage("")}
+      className="text-slate-400 hover:text-white text-sm font-bold cursor-pointer"
+    >
+      ×
+    </button>
+  </div>
+)}
 
           {activeTab === "overview" && (
             <>
