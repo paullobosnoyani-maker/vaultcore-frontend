@@ -170,4 +170,205 @@ export function StatementExportWidget({
       "<div class='grid'>",
       `<div class='box'><div class='box-label'>Account Holder &amp; CIP Status</div><div class='box-val'>${entityName}</div><div style='font-size:11px; color:#475569; margin-top:2px;'>Email: ${entityEmail}<br/>Compliance Status: <strong>${kycStatus}</strong></div></div>`,
       "<div class='box'><div class='box-label'>US Clearing &amp; Routing Credentials</div><div class='box-val'>ABA Routing Number: <span class='mono'>021000021</span></div><div style='font-size:11px; color:#475569; margin-top:2px;'>Fedwire / ACH Settlement: Enabled (Same-Day USD)<br/>Sweep Program: FDIC Pass-Through up to $2,500,000</div></div>",
-      "</div>",
+      "</div>"
+      `<div class='balance-banner'><div><div class='balance-label'>Total Ending Commercial Treasury Balance (USD)</div><div class='balance-amt'>$${formattedTotal}</div></div><div style='text-align:right; font-size:11px; color:#cbd5e1;'>Treasury Yield Rate: <strong style='color:#34d399;'>4.85% APY</strong><br/>Currency: United States Dollar (USD)</div></div>`,
+      "<div class='section-title'>Custodial Sub-Account Summary</div>",
+      `<table><thead><tr><th>Sub-Account Name</th><th>Account Classification</th><th>Currency</th><th class='right'>Ending Balance</th></tr></thead><tbody>${walletRowsHtml}</tbody></table>`,
+      "<div class='section-title'>Itemized Settlement Ledger</div>",
+      `<table><thead><tr><th>Date</th><th>Account</th><th>Type</th><th>Description</th><th class='right'>Amount (USD)</th></tr></thead><tbody>${txRowsHtml}</tbody></table>`,
+      "<div class='footer'><strong>INSTITUTIONAL &amp; REGULATORY DISCLOSURES:</strong> VaultCore US is a commercial treasury technology platform and is not a standalone chartered bank. Custodial deposit services and sweep accounts are provided by FDIC-insured U.S. partner banking institutions (Member FDIC). Sweep balances are eligible for up to $2,500,000 in aggregate pass-through FDIC deposit insurance coverage subject to program terms and beneficiary aggregation rules. All wire, ACH, and card settlements are screened in accordance with U.S. Bank Secrecy Act (BSA), FinCEN CIP/KYB, and OFAC sanctions regulations. Retain this document for corporate audit and IRS Form 1099-INT tax reconciliation.</div>",
+      "<script>window.onload = function() { setTimeout(function() { window.print(); }, 350); };</script>",
+      "</body></html>",
+    ].join("\n");
+
+    const printWindow = window.open("", "_blank", "width=920,height=1080");
+    if (!printWindow) return;
+    printWindow.document.write(htmlDoc);
+    printWindow.document.close();
+  };
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col justify-between">
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+            <FileSpreadsheet className="w-4 h-4 text-rose-800" />
+            <span>Official Statements &amp; Tax Vault</span>
+          </div>
+          <span className="text-[11px] font-mono text-slate-500">Nov 2026</span>
+        </div>
+        <p className="text-xs text-slate-500 leading-relaxed mb-4">
+          Download audit-ready monthly PDF bank statements, CSV ledger exports, and bank verification letters for {user?.business_name || user?.email || "your entity"}.
+        </p>
+      </div>
+
+      <div className="space-y-2.5">
+        <div className="bg-slate-50 border border-slate-200/80 rounded-xl px-3.5 py-2.5 flex items-center justify-between text-xs">
+          <span className="font-medium text-slate-700">IRS Form W-9 &amp; Bank Verification Letter</span>
+          <span className="text-emerald-700 font-semibold flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5" /> Verified
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <button
+            type="button"
+            onClick={exportOfficialPdf}
+            className="w-full flex items-center justify-center gap-2 bg-rose-800 hover:bg-rose-900 text-white font-semibold py-2.5 px-3 rounded-xl text-xs transition cursor-pointer"
+          >
+            <FileText className="w-4 h-4" />
+            <span>Download Official PDF Statement</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={exportCsv}
+            className="w-full flex items-center justify-center gap-2 bg-slate-950 hover:bg-slate-800 text-white font-semibold py-2.5 px-3 rounded-xl text-xs transition cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>{downloaded ? "CSV Downloaded" : "Export Ledger (CSV)"}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+export function BeneficiariesWidget() {
+  const [beneficiaries, setBeneficiaries] = useState([
+    { name: "Amazon Web Services Inc.", bank: "Wells Fargo N.A.", routing: "121000248", acct: "••••4910", type: "ACH Vendor" },
+    { name: "Gusto Payroll Clearing", bank: "JPMorgan Chase", routing: "021000021", acct: "••••8821", type: "Payroll" },
+    { name: "Stripe Merchant Payouts", bank: "Evolve Bank & Trust", routing: "084106768", acct: "••••3019", type: "Treasury" },
+  ]);
+  const [newName, setNewName] = useState("");
+  const [newBank, setNewBank] = useState("");
+
+  const addVendor = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName || !newBank) return;
+    setBeneficiaries([
+      ...beneficiaries,
+      {
+        name: newName,
+        bank: newBank,
+        routing: "021000021",
+        acct: "••••" + Math.floor(1000 + Math.random() * 9000),
+        type: "Verified ACH",
+      },
+    ]);
+    setNewName("");
+    setNewBank("");
+  };
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+          <BookUser className="w-4 h-4 text-rose-800" />
+          <span>Verified US Wire &amp; ACH Beneficiaries</span>
+        </div>
+        <span className="text-xs text-slate-500">{beneficiaries.length} Saved</span>
+      </div>
+
+      <div className="space-y-2.5 mb-4">
+        {beneficiaries.map((b, i) => (
+          <div
+            key={i}
+            className="bg-slate-50 border border-slate-200/80 rounded-xl px-3.5 py-2.5 flex items-center justify-between text-xs"
+          >
+            <div>
+              <div className="font-semibold text-slate-900">{b.name}</div>
+              <div className="text-slate-500">
+                {b.bank} &bull; ABA {b.routing} ({b.acct})
+              </div>
+            </div>
+            <span className="bg-white border border-slate-200 text-slate-700 px-2.5 py-1 rounded-md font-medium">
+              {b.type}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <form onSubmit={addVendor} className="flex flex-col sm:flex-row gap-2">
+        <input
+          type="text"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          placeholder="Vendor name..."
+          className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rose-800"
+        />
+        <input
+          type="text"
+          value={newBank}
+          onChange={(e) => setNewBank(e.target.value)}
+          placeholder="US Bank..."
+          className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rose-800"
+        />
+        <button
+          type="submit"
+          className="bg-rose-800 hover:bg-rose-900 text-white font-semibold px-3.5 py-2 rounded-lg text-xs cursor-pointer"
+        >
+          + Add
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export function TeamPermissionsWidget({ ownerEmail }: { ownerEmail: string }) {
+  const [members, setMembers] = useState([
+    { email: ownerEmail, role: "Primary Signer & Admin", limit: "Unlimited" },
+    { email: "controller@vaultcore.us", role: "CPA / Read-Only Auditor", limit: "$0 (View Only)" },
+  ]);
+  const [inviteEmail, setInviteEmail] = useState("");
+
+  const handleInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail) return;
+    setMembers([...members, { email: inviteEmail, role: "Cardholder & Ops", limit: "$10,000 / mo" }]);
+    setInviteEmail("");
+  };
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+          <UserPlus className="w-4 h-4 text-rose-800" />
+          <span>Corporate Signers &amp; RBAC Permissions</span>
+        </div>
+        <span className="text-xs text-slate-500">{members.length} Active Users</span>
+      </div>
+
+      <div className="space-y-2.5 mb-4">
+        {members.map((m, i) => (
+          <div
+            key={i}
+            className="bg-slate-50 border border-slate-200/80 rounded-xl px-3.5 py-2.5 flex items-center justify-between text-xs"
+          >
+            <div>
+              <div className="font-semibold text-slate-900">{m.email}</div>
+              <div className="text-slate-500">{m.role}</div>
+            </div>
+            <span className="font-mono font-semibold text-slate-700">{m.limit}</span>
+          </div>
+        ))}
+      </div>
+
+      <form onSubmit={handleInvite} className="flex flex-col sm:flex-row gap-2">
+        <input
+          type="email"
+          value={inviteEmail}
+          onChange={(e) => setInviteEmail(e.target.value)}
+          placeholder="Invite executive or CPA email..."
+          className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-rose-800"
+        />
+        <button
+          type="submit"
+          className="bg-slate-950 hover:bg-rose-900 text-white font-semibold px-4 py-2 rounded-lg text-xs cursor-pointer"
+        >
+          Send Invite
+        </button>
+      </form>
+    </div>
+  );
+}
+
