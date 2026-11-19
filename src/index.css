@@ -120,3 +120,48 @@ main .bg-amber-50 {
   border-color: rgba(245, 158, 11, 0.3) !important;
   color: #fde68a !important;
 }
+
+
+/* =========================================================
+   VaultCore US — Complete Widget & Form Dark Polish
+   ========================================================= */
+
+/* Unify all inner widget cards, tables & Stripe boxes */
+main .rounded-2xl,
+main .rounded-xl {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+main .bg-slate-50,
+main .bg-slate-100,
+main .bg-gray-50 {
+  background-color: #111827 !important;
+  color: #f8fafc !important;
+}
+
+/* Fix labels and muted text inside inner widgets */
+main label,
+main .text-slate-600,
+main .text-slate-500,
+main .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+main h2,
+main h3,
+main .font-bold,
+main .font-semibold {
+  color: #f8fafc;
+}
+
+/* Crisp tabular numbers for all balances & ledger amounts */
+.font-mono {
+  font-variant-numeric: tabular-nums !important;
+}
+
+/* Subtle institutional hover glow on dashboard cards */
+main > div > div.rounded-2xl:hover,
+main > form.rounded-2xl:hover {
+  border-color: rgba(244, 63, 94, 0.28) !important;
+  transition: border-color 0.2s ease;
+}
