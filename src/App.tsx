@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
-  Wallet, ArrowUpRight, ShieldCheck, LogOut, RefreshCw, Send,
+  Wallet, LogOut, RefreshCw,
   LayoutDashboard, ArrowLeftRight, Landmark, FileText, TrendingUp,
-  AlertCircle, CreditCard, Users, Building2
+  AlertCircle, CreditCard, Users, Building2, Menu, X
 } from "lucide-react";
 import { StripeDepositCard } from "./StripeDepositCard";
 import { AchWithdrawalCard } from "./AchWithdrawalCard";
@@ -17,8 +17,18 @@ const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000") + "/ap
 
 export default function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
-  const [user, setUser] = useState<any>((() => { try { const v = localStorage.getItem("user"); return v && v !== "undefined" ? JSON.parse(v) : null; } catch { localStorage.removeItem("user"); localStorage.removeItem("token"); return null; } })());
+  const [user, setUser] = useState<any>((() => {
+    try {
+      const v = localStorage.getItem("user");
+      return v && v !== "undefined" ? JSON.parse(v) : null;
+    } catch {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      return null;
+    }
+  })());
   const [activeTab, setActiveTab] = useState<"overview" | "accounts" | "payments" | "cards" | "capital" | "ledger" | "team">("overview");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [wallets, setWallets] = useState<any[]>([]);
@@ -35,8 +45,13 @@ export default function App() {
     if (!token || !user?.id) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/${user.id}/dashboard`, { headers: { Authorization: `Bearer ${token}` } });
-      if (res.status === 401 || res.status === 403) { handleLogout(); return; }
+      const res = await fetch(`${API_URL}/${user.id}/dashboard`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.status === 401 || res.status === 403) {
+        handleLogout();
+        return;
+      }
       const data = await res.json();
       setWallets(data.wallets || []);
       setTransactions(data.recentTransactions || []);
@@ -44,10 +59,14 @@ export default function App() {
         setSenderId((prev) => prev || data.wallets[0].id);
         if (data.wallets.length > 1) setReceiverId((prev) => prev || data.wallets[1].id);
       }
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { if (token && user?.id) fetchDashboard(); }, [token, user?.id]);
+  useEffect(() => {
+    if (token && user?.id) fetchDashboard();
+  }, [token, user?.id]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -55,24 +74,38 @@ export default function App() {
     setToken(null);
     setUser(null);
     setShowAuth(false);
+    setMobileMenuOpen(false);
   };
 
   const submitTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
     setActionMessage("");
-    if (senderId === receiverId) { setActionMessage("Error: Choose two different wallets."); return; }
+    if (senderId === receiverId) {
+      setActionMessage("Error: Choose two different wallets.");
+      return;
+    }
     try {
       const res = await fetch(`${API_URL}/transfer`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ senderAccountId: senderId, receiverAccountId: receiverId, amount: parseFloat(transferAmount), description: "Internal Treasury Allocation" })
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          senderAccountId: senderId,
+          receiverAccountId: receiverId,
+          amount: parseFloat(transferAmount),
+          description: "Internal Treasury Allocation",
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setActionMessage("Internal treasury transfer settled.");
       setTransferAmount("");
       fetchDashboard();
-    } catch (err: any) { setActionMessage(`Error: ${err.message}`); }
+    } catch (err: any) {
+      setActionMessage(`Error: ${err.message}`);
+    }
   };
 
   const submitMemberTransfer = async (e: React.FormEvent) => {
@@ -81,8 +114,15 @@ export default function App() {
     try {
       const res = await fetch(`${API_URL}/member-transfer`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ senderUserId: user.id, recipientEmail: memberEmail, amount: parseFloat(memberAmount) })
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          senderUserId: user.id,
+          recipientEmail: memberEmail,
+          amount: parseFloat(memberAmount),
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -90,12 +130,34 @@ export default function App() {
       setMemberEmail("");
       setMemberAmount("");
       fetchDashboard();
-    } catch (err: any) { setActionMessage(`Error: ${err.message}`); }
+    } catch (err: any) {
+      setActionMessage(`Error: ${err.message}`);
+    }
   };
 
   if (!token) {
-    if (!showAuth) return <LandingPage onOpenAuth={(m) => { setIsLogin(m); setShowAuth(true); }} />;
-    return <OnboardingWizard initialLoginMode={isLogin} onBackHome={() => setShowAuth(false)} onSuccessAuth={(t, u) => { localStorage.setItem("token", t); localStorage.setItem("user", JSON.stringify(u)); setToken(t); setUser(u); }} />;
+    if (!showAuth) {
+      return (
+        <LandingPage
+          onOpenAuth={(m) => {
+            setIsLogin(m);
+            setShowAuth(true);
+          }}
+        />
+      );
+    }
+    return (
+      <OnboardingWizard
+        initialLoginMode={isLogin}
+        onBackHome={() => setShowAuth(false)}
+        onSuccessAuth={(t, u) => {
+          localStorage.setItem("token", t);
+          localStorage.setItem("user", JSON.stringify(u));
+          setToken(t);
+          setUser(u);
+        }}
+      />
+    );
   }
 
   const totalBalance = wallets.reduce((sum, w) => sum + parseFloat(w.balance || "0"), 0);
@@ -109,20 +171,63 @@ export default function App() {
     { id: "team", label: "Team & Security", icon: Users },
   ];
 
+  const handleTabSelect = (id: any) => {
+    setActiveTab(id);
+    setMobileMenuOpen(false);
+  };
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex font-sans">
-      <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between p-5 shrink-0">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex font-sans relative">
+      {/* Mobile Backdrop Overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-xs md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Responsive Sidebar: Slide-out drawer on mobile, static on desktop */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex flex-col justify-between p-5 shrink-0 transition-transform duration-200 ease-in-out md:static md:translate-x-0 ${
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div>
-          <div className="flex items-center gap-2.5 px-2 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-rose-900 flex items-center justify-center text-white"><ShieldCheck className="w-5 h-5" /></div>
-            <span className="font-bold text-lg text-slate-950">VaultCore <span className="text-xs text-rose-800">US</span></span>
+          <div className="flex items-center justify-between px-2 mb-8">
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/logo.png"
+                alt="VaultCore US"
+                className="w-8 h-8 rounded-lg object-contain bg-[#090D16] p-0.5 border border-white/10"
+              />
+              <span className="font-bold text-lg text-slate-950">
+                VaultCore <span className="text-xs text-rose-800">US</span>
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white md:hidden"
+              aria-label="Close navigation menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
+
           <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = activeTab === item.id;
               return (
-                <button key={item.id} onClick={() => setActiveTab(item.id as any)} className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer ${active ? "bg-rose-50 text-rose-900 border border-rose-200" : "text-slate-600 hover:bg-slate-100"}`}>
+                <button
+                  key={item.id}
+                  onClick={() => handleTabSelect(item.id)}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                    active
+                      ? "bg-rose-50 text-rose-900 border border-rose-200"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
                   <Icon className={`w-4 h-4 ${active ? "text-rose-800" : "text-slate-400"}`} />
                   <span>{item.label}</span>
                 </button>
@@ -130,142 +235,36 @@ export default function App() {
             })}
           </nav>
         </div>
+
         <div className="border-t border-slate-200 pt-4 space-y-3">
           <div className="px-2">
-            <div className="text-xs font-bold text-slate-900 truncate">{user?.business_name || user?.email}</div>
-            <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${user?.kyc_status === "VERIFIED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-800 border-amber-200"}`}>CIP: {user?.kyc_status || "PENDING"}</span>
+            <div className="text-xs font-bold text-slate-900 truncate">
+              {user?.business_name || user?.email}
+            </div>
+            <span
+              className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                user?.kyc_status === "VERIFIED"
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  : "bg-amber-50 text-amber-800 border-amber-200"
+              }`}
+            >
+              CIP: {user?.kyc_status || "PENDING"}
+            </span>
           </div>
-          <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-600 hover:text-rose-800 cursor-pointer"><LogOut className="w-4 h-4" /><span>Sign Out</span></button>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-600 hover:text-rose-800 cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </button>
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-slate-200 px-8 flex items-center justify-between bg-white">
-          <div>
-            <h1 className="text-base font-bold text-slate-950">{navItems.find((n) => n.id === activeTab)?.label}</h1>
-          </div>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
+        <header className="min-h-16 border-b border-slate-200 px-4 md:px-8 py-3 flex flex-wrap items-center justify-between gap-2 bg-white">
           <div className="flex items-center gap-3">
-            <button onClick={() => setActiveTab("payments")} className="bg-rose-800 hover:bg-rose-900 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">Move Money</button>
-            <button onClick={fetchDashboard} className="flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 cursor-pointer">
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /><span>Sync</span>
-            </button>
-          </div>
-        </header>
-
-        <main className="p-8 max-w-6xl w-full mx-auto space-y-6">
-          {user?.kyc_status !== "VERIFIED" && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 text-xs text-amber-900">
-              <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-              <div><strong>CIP / KYB Verification In Progress:</strong> External wire limits lift automatically upon compliance approval.</div>
-            </div>
-          )}
-          {actionMessage && <div className="bg-rose-50 border border-rose-200 text-rose-900 px-4 py-3 rounded-xl text-xs font-semibold">{actionMessage}</div>}
-
-          {activeTab === "overview" && (
-            <>
-              <div className="bg-white border border-slate-200 rounded-2xl p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xs">
-                <div>
-                  <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase mb-1"><TrendingUp className="w-4 h-4 text-rose-800" /><span>Total VaultCore US Balance (USD)</span></div>
-                  <div className="text-4xl font-bold text-slate-950 font-mono">${totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                  <div className="text-xs text-slate-500 mt-1">Custodial accounts held at FDIC-insured partner banks &bull; ABA 021000021</div>
-                </div>
-                <div className="flex flex-wrap gap-2.5">
-                  <button onClick={() => setActiveTab("payments")} className="bg-rose-800 hover:bg-rose-900 text-white font-semibold px-4 py-2.5 rounded-xl text-xs cursor-pointer">+ Add / Send Funds</button>
-                  <button onClick={() => setActiveTab("cards")} className="bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold px-4 py-2.5 rounded-xl text-xs cursor-pointer">Manage Visa Card</button>
-                  <button onClick={() => setActiveTab("capital")} className="bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold px-4 py-2.5 rounded-xl text-xs cursor-pointer">Apply for Capital</button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {wallets.map((w) => {
-                  const pct = totalBalance > 0 ? Math.round((parseFloat(w.balance) / totalBalance) * 100) : 0;
-                  return (
-                    <div key={w.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs">
-                      <div className="flex justify-between text-slate-500 mb-2"><span className="text-xs font-bold uppercase">{w.account_name}</span><Wallet className="w-4 h-4 text-rose-800" /></div>
-                      <div className="text-2xl font-bold text-slate-950 font-mono">${parseFloat(w.balance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                      <div className="mt-3 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-rose-800 rounded-full" style={{ width: `${pct}%` }} /></div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <VirtualDebitCard holderName={user?.business_name || user?.email || "AUTHORIZED SIGNER"} />
-                <FdicSweepWidget totalBalance={totalBalance} />
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <VirtualAccountCard userEmail={user?.email} />
-                <CashFlowChart transactions={transactions} />
-              </div>
-            </>
-          )}
-
-          {activeTab === "accounts" && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <VirtualAccountCard userEmail={user?.email} />
-                <FdicSweepWidget totalBalance={totalBalance} />
-              </div>
-              <form onSubmit={submitTransfer} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 max-w-xl">
-                <h2 className="text-sm font-bold text-slate-950">Instant Sub-Account Rebalance</h2>
-                <select value={senderId} onChange={(e) => setSenderId(e.target.value)} className="w-full rounded-xl px-3 py-2.5 text-xs">{wallets.map((w) => <option key={w.id} value={w.id}>From: {w.account_name} (${parseFloat(w.balance || "0").toFixed(2)})</option>)}</select>
-                <select value={receiverId} onChange={(e) => setReceiverId(e.target.value)} className="w-full rounded-xl px-3 py-2.5 text-xs">{wallets.map((w) => <option key={w.id} value={w.id}>To: {w.account_name} (${parseFloat(w.balance || "0").toFixed(2)})</option>)}</select>
-
-                
-                <input type="number" step="0.01" min="1" required value={transferAmount} onChange={(e) => setTransferAmount(e.target.value)} placeholder="Amount (USD)" className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs" />
-                <button type="submit" className="w-full bg-rose-800 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer">Execute Treasury Allocation</button>
-              </form>
-            </div>
-          )}
-
-          {activeTab === "payments" && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <StripeDepositCard wallets={wallets} token={token} onSuccess={fetchDashboard} onMessage={setActionMessage} />
-                <AchWithdrawalCard token={token} onSuccess={fetchDashboard} onMessage={setActionMessage} />
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <BeneficiariesWidget />
-                <form onSubmit={submitMemberTransfer} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-                  <h2 className="text-sm font-bold text-slate-950">Instant VaultCore Member Wire</h2>
-                  <input type="email" required value={memberEmail} onChange={(e) => setMemberEmail(e.target.value)} placeholder="Recipient Member Email" className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs" />
-                  <input type="number" step="0.01" min="1" required value={memberAmount} onChange={(e) => setMemberAmount(e.target.value)} placeholder="Amount (USD)" className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs" />
-                  <button type="submit" className="w-full bg-slate-900 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer">Send Instant Member Wire</button>
-                </form>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "cards" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <VirtualDebitCard holderName={user?.business_name || user?.email || "AUTHORIZED SIGNER"} />
-              <ScheduledBillsWidget />
-            </div>
-          )}
-
-          {activeTab === "capital" && <FundingPortalCard userId={user.id} userRole={user?.role} token={token} onSuccess={fetchDashboard} onMessage={setActionMessage} />}
-
-          {activeTab === "ledger" && (
-            <div className="space-y-6">
-              <StatementExportWidget user={user} wallets={wallets} transactions={transactions} />
-              <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200"><tr><th className="px-6 py-3">Account</th><th className="px-6 py-3">Type</th><th className="px-6 py-3">Description</th><th className="px-6 py-3 text-right">Amount</th></tr></thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {transactions.map((tx) => (
-                      <tr key={tx.id}><td className="px-6 py-4 font-semibold">{tx.account_name}</td><td className="px-6 py-4 font-mono text-slate-500">{tx.transaction_type}</td><td className="px-6 py-4">{tx.description}</td><td className="px-6 py-4 text-right font-mono font-bold">${parseFloat(tx.amount).toFixed(2)}</td></tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "team" && <TeamPermissionsWidget ownerEmail={user?.email || "admin@vaultcore.us"} />}
-        </main>
-      </div>
-      <SupportChatWidget userEmail={user?.email || "Client"} />
-    </div>
-  );
-}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
