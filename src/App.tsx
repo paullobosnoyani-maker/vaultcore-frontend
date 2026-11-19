@@ -384,6 +384,49 @@ export default function App() {
                 <VirtualAccountCard userEmail={user?.email} />
                 <CashFlowChart transactions={transactions} />
               </div>
+              <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+             <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+               <h2 className="text-sm font-bold text-slate-950">Recent Treasury Activity</h2>
+               <button
+                 type="button"
+                 onClick={() => setActiveTab("ledger")}
+                 className="text-xs font-semibold text-rose-800 hover:underline cursor-pointer"
+               >
+                 View Full Ledger & PDF Statements →
+               </button>
+             </div>
+             {transactions.length === 0 ? (
+               <div className="p-6 text-xs text-slate-500">
+                 No settled transactions recorded yet. Deposits, ACH withdrawals, and internal transfers will appear here automatically.
+               </div>
+             ) : (
+               <div className="overflow-x-auto">
+                 <table className="w-full text-left text-xs min-w-[500px]">
+                   <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200">
+                     <tr>
+                       <th className="px-6 py-3">Account</th>
+                       <th className="px-6 py-3">Type</th>
+                       <th className="px-6 py-3">Description</th>
+                       <th className="px-6 py-3 text-right">Amount</th>
+                     </tr>
+                   </thead>
+                   <tbody className="divide-y divide-slate-100">
+                     {transactions.slice(0, 6).map((tx) => (
+                       <tr key={tx.id}>
+                         <td className="px-6 py-3.5 font-semibold">{tx.account_name}</td>
+                         <td className="px-6 py-3.5 font-mono text-slate-500">{tx.transaction_type}</td>
+                         <td className="px-6 py-3.5">{tx.description}</td>
+                         <td className="px-6 py-3.5 text-right font-mono font-bold">
+                           ${parseFloat(tx.amount).toFixed(2)}
+                         </td>
+                       </tr>
+                     ))}
+                   </tbody>
+                 </table>
+               </div>
+             )}
+           </div>
+
             </>
           )}
 
