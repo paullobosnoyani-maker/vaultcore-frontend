@@ -61,7 +61,7 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
       <div className="bg-slate-950 text-slate-300 text-[11px] py-2 px-6 text-center">
         VaultCore is a financial technology company, not a bank. Banking services provided by our FDIC-insured partner banks. &bull; Variable Treasury Yield: <span className="text-rose-400 font-semibold">4.85% APY*</span> (as of Nov 15, 2026)
       </div>
-      <header className="sticky top-0 z-40 bg-[#090D16]/95 backdrop-blur-md border-b border-white/10">
+      <nav className="sticky top-0 z-40 bg-[#090D16]/95 backdrop-blur-md border-b border-white/10">
        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
       <div className="flex items-center gap-3 cursor-pointer" onClick={() => { navigateTo("home"); setActiveMenu(null); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
