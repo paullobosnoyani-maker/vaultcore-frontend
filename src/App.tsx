@@ -268,3 +268,260 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
+            className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:text-slate-950 md:hidden cursor-pointer"
+              aria-label="Open navigation menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <h1 className="text-sm md:text-base font-bold text-slate-950">
+              {navItems.find((n) => n.id === activeTab)?.label}
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-2 md:gap-3">
+            <button
+              onClick={() => setActiveTab("payments")}
+              className="bg-rose-800 hover:bg-rose-900 text-white px-3 md:px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer"
+            >
+              Move Money
+            </button>
+            <button
+              onClick={fetchDashboard}
+              className="flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-2.5 md:px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 cursor-pointer"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+              <span>Sync</span>
+            </button>
+          </div>
+        </header>
+
+        <main className="p-4 md:p-8 max-w-6xl w-full mx-auto space-y-6">
+          {user?.kyc_status !== "VERIFIED" && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 text-xs text-amber-900">
+              <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+              <div>
+                <strong>CIP / KYB Verification In Progress:</strong> External wire limits lift automatically upon compliance approval.
+              </div>
+            </div>
+          )}
+
+          {actionMessage && (
+            <div className="bg-rose-50 border border-rose-200 text-rose-900 px-4 py-3 rounded-xl text-xs font-semibold">
+              {actionMessage}
+            </div>
+          )}
+
+          {activeTab === "overview" && (
+            <>
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xs">
+                <div>
+                  <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase mb-1">
+                    <TrendingUp className="w-4 h-4 text-rose-800" />
+                    <span>Total VaultCore US Balance (USD)</span>
+                  </div>
+                  <div className="text-3xl md:text-4xl font-bold text-slate-950 font-mono">
+                    ${totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    Custodial accounts held at FDIC-insured partner banks &bull; ABA 021000021
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2.5">
+                  <button
+                    onClick={() => setActiveTab("payments")}
+                    className="bg-rose-800 hover:bg-rose-900 text-white font-semibold px-4 py-2.5 rounded-xl text-xs cursor-pointer"
+                  >
+                    + Add / Send Funds
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("cards")}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold px-4 py-2.5 rounded-xl text-xs cursor-pointer"
+                  >
+                    Manage Visa Card
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("capital")}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold px-4 py-2.5 rounded-xl text-xs cursor-pointer"
+                  >
+                    Apply for Capital
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {wallets.map((w) => {
+                  const pct = totalBalance > 0 ? Math.round((parseFloat(w.balance) / totalBalance) * 100) : 0;
+                  return (
+                    <div key={w.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs">
+                      <div className="flex justify-between text-slate-500 mb-2">
+                        <span className="text-xs font-bold uppercase">{w.account_name}</span>
+                        <Wallet className="w-4 h-4 text-rose-800" />
+                      </div>
+                      <div className="text-2xl font-bold text-slate-950 font-mono">
+                        ${parseFloat(w.balance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                      <div className="mt-3 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-rose-800 rounded-full" style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <VirtualDebitCard holderName={user?.business_name || user?.email || "AUTHORIZED SIGNER"} />
+                <FdicSweepWidget totalBalance={totalBalance} />
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <VirtualAccountCard userEmail={user?.email} />
+                <CashFlowChart transactions={transactions} />
+              </div>
+            </>
+          )}
+
+          {activeTab === "accounts" && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <VirtualAccountCard userEmail={user?.email} />
+                <FdicSweepWidget totalBalance={totalBalance} />
+              </div>
+              <form onSubmit={submitTransfer} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 max-w-xl">
+                <h2 className="text-sm font-bold text-slate-950">Instant Sub-Account Rebalance</h2>
+                <select
+                  value={senderId}
+                  onChange={(e) => setSenderId(e.target.value)}
+                  className="w-full rounded-xl px-3 py-2.5 text-xs"
+                >
+                  {wallets.map((w) => (
+                    <option key={w.id} value={w.id}>
+                      From: {w.account_name} (${parseFloat(w.balance || "0").toFixed(2)})
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={receiverId}
+                  onChange={(e) => setReceiverId(e.target.value)}
+                  className="w-full rounded-xl px-3 py-2.5 text-xs"
+                >
+                  {wallets.map((w) => (
+                    <option key={w.id} value={w.id}>
+                      To: {w.account_name} (${parseFloat(w.balance || "0").toFixed(2)})
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="1"
+                  required
+                  value={transferAmount}
+                  onChange={(e) => setTransferAmount(e.target.value)}
+                  placeholder="Amount (USD)"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-rose-800 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
+                >
+                  Execute Treasury Allocation
+                </button>
+              </form>
+            </div>
+          )}
+
+          {activeTab === "payments" && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <StripeDepositCard wallets={wallets} token={token} onSuccess={fetchDashboard} onMessage={setActionMessage} />
+                <AchWithdrawalCard token={token} onSuccess={fetchDashboard} onMessage={setActionMessage} />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <BeneficiariesWidget />
+                <form onSubmit={submitMemberTransfer} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+                  <h2 className="text-sm font-bold text-slate-950">Instant VaultCore Member Wire</h2>
+                  <input
+                    type="email"
+                    required
+                    value={memberEmail}
+                    onChange={(e) => setMemberEmail(e.target.value)}
+                    placeholder="Recipient Member Email"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"
+                  />
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="1"
+                    required
+                    value={memberAmount}
+                    onChange={(e) => setMemberAmount(e.target.value)}
+                    placeholder="Amount (USD)"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-slate-900 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
+                  >
+                    Send Instant Member Wire
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "cards" && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <VirtualDebitCard holderName={user?.business_name || user?.email || "AUTHORIZED SIGNER"} />
+              <ScheduledBillsWidget />
+            </div>
+          )}
+
+          {activeTab === "capital" && (
+            <FundingPortalCard
+              userId={user.id}
+              userRole={user?.role}
+              token={token}
+              onSuccess={fetchDashboard}
+              onMessage={setActionMessage}
+            />
+          )}
+
+          {activeTab === "ledger" && (
+            <div className="space-y-6">
+              <StatementExportWidget user={user} wallets={wallets} transactions={transactions} />
+              <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto">
+                <table className="w-full text-left text-xs min-w-[520px]">
+                  <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200">
+                    <tr>
+                      <th className="px-6 py-3">Account</th>
+                      <th className="px-6 py-3">Type</th>
+                      <th className="px-6 py-3">Description</th>
+                      <th className="px-6 py-3 text-right">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {transactions.map((tx) => (
+                      <tr key={tx.id}>
+                        <td className="px-6 py-4 font-semibold">{tx.account_name}</td>
+                        <td className="px-6 py-4 font-mono text-slate-500">{tx.transaction_type}</td>
+                        <td className="px-6 py-4">{tx.description}</td>
+                        <td className="px-6 py-4 text-right font-mono font-bold">
+                          ${parseFloat(tx.amount).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "team" && <TeamPermissionsWidget ownerEmail={user?.email || "admin@vaultcore.us"} />}
+        </main>
+      </div>
+
+      <SupportChatWidget userEmail={user?.email || "Client"} />
+    </div>
+  );
+}
+
