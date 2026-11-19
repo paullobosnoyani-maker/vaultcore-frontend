@@ -62,13 +62,16 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
         VaultCore is a financial technology company, not a bank. Banking services provided by our FDIC-insured partner banks. &bull; Variable Treasury Yield: <span className="text-rose-400 font-semibold">4.85% APY*</span> (as of Nov 15, 2026)
       </div>
 
-      <nav className="border-b border-white/10 bg-[#081021]/95 backdrop-blur sticky top-0 z-50 text-white" onMouseLeave={() => setActiveMenu(null)}>
-        <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => { navigateTo("home"); setActiveMenu(null); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-              <div className="w-9 h-9 rounded-lg bg-rose-700 flex items-center justify-center text-white shadow"><ShieldCheck className="w-5 h-5" /></div>
-              <span className="font-bold text-xl tracking-tight text-white">VaultCore <span className="text-[11px] font-bold text-rose-400 uppercase tracking-widest">US</span></span>
-            </div>
+      <div className="flex items-center gap-3 cursor-pointer" onClick={() => { navigateTo("home"); setActiveMenu(null); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+  <img
+    src="/logo.png"
+    alt="VaultCore US"
+    className="w-9 h-9 rounded-lg object-contain bg-[#111827] p-0.5 ring-1 ring-amber-500/30 shadow-md"
+  />
+  <span className="font-bold text-xl tracking-tight text-white">
+    VaultCore <span className="text-[11px] font-bold text-rose-400 uppercase tracking-widest">US</span>
+  </span>
+</div>
 
             <div className="hidden lg:flex items-center gap-2 text-xs font-semibold">
               {([
