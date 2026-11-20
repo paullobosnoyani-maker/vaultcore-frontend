@@ -627,87 +627,89 @@ export default function App() {
                  </button>
                ) : (
                  <div className="space-y-3">
-                   <input
-                     type="text"
-                     maxLength={6}
-                     required
-                     value={wireSmsCode}
-                     onChange={(e) => setWireSmsCode(e.target.value.replace(/\D/g, ""))}
-                     placeholder="Enter 6-Digit SMS OTP Code"
-                     className="w-full bg-slate-50 border border-emerald-400 rounded-xl px-3 py-2 text-xs font-mono tracking-widest text-center"
-                   />
-                   <div className="flex gap-2">
-                     <button
-                       type="button"
-                       onClick={requestWireSms}
-                       className="px-3 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold cursor-pointer"
-                     >
-                       Resend SMS
-                     </button>
-                     <button
-                       type="submit"
-                       className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
-                     >
-                       Verify SMS &amp; Settle Wire
-                     </button>
-                   </div>
-                 </div>
-               )}
-             </form>
-
-
-          {activeTab === "cards" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <VirtualDebitCard holderName={user?.business_name || user?.email || "AUTHORIZED SIGNER"} />
-              <ScheduledBillsWidget />
+                <input
+                      type="text"
+                      maxLength={6}
+                      required
+                      value={wireSmsCode}
+                      onChange={(e) => setWireSmsCode(e.target.value.replace(/\D/g, ""))}
+                      placeholder="Enter 6-Digit SMS OTP Code"
+                      className="w-full bg-slate-50 border border-emerald-400 rounded-xl px-3 py-2 text-xs font-mono tracking-widest text-center"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={requestWireSms}
+                        className="px-3 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold cursor-pointer"
+                      >
+                        Resend SMS
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
+                      >
+                        Verify SMS &amp; Settle Wire
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </form>
             </div>
-          )}
+          </div>
+        )}
 
-          {activeTab === "capital" && (
-            <FundingPortalCard
-              userId={user.id}
-              userRole={user?.role}
-              token={token}
-              onSuccess={fetchDashboard}
-              onMessage={setActionMessage}
-            />
-          )}
+        {activeTab === "cards" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <VirtualDebitCard holderName={user?.business_name || user?.email || "AUTHORIZED SIGNER"} />
+            <ScheduledBillsWidget />
+          </div>
+        )}
 
-          {activeTab === "ledger" && (
-            <div className="space-y-6">
-              <StatementExportWidget user={user} wallets={wallets} transactions={transactions} />
-              <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto">
-                <table className="w-full text-left text-xs min-w-[520px]">
-                  <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200">
-                    <tr>
-                      <th className="px-6 py-3">Account</th>
-                      <th className="px-6 py-3">Type</th>
-                      <th className="px-6 py-3">Description</th>
-                      <th className="px-6 py-3 text-right">Amount</th>
+        {activeTab === "capital" && (
+          <FundingPortalCard
+            userId={user.id}
+            userRole={user?.role}
+            token={token}
+            onSuccess={fetchDashboard}
+            onMessage={setActionMessage}
+          />
+        )}
+
+        {activeTab === "ledger" && (
+          <div className="space-y-6">
+            <StatementExportWidget user={user} wallets={wallets} transactions={transactions} />
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[520px]">
+                <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200">
+                  <tr>
+                    <th className="px-6 py-3">Account</th>
+                    <th className="px-6 py-3">Type</th>
+                    <th className="px-6 py-3">Description</th>
+                    <th className="px-6 py-3 text-right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {transactions.map((tx) => (
+                    <tr key={tx.id}>
+                      <td className="px-6 py-4 font-semibold">{tx.account_name}</td>
+                      <td className="px-6 py-4 font-mono text-slate-500">{tx.transaction_type}</td>
+                      <td className="px-6 py-4">{tx.description}</td>
+                      <td className="px-6 py-4 text-right font-mono font-bold">
+                        ${parseFloat(tx.amount).toFixed(2)}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {transactions.map((tx) => (
-                      <tr key={tx.id}>
-                        <td className="px-6 py-4 font-semibold">{tx.account_name}</td>
-                        <td className="px-6 py-4 font-mono text-slate-500">{tx.transaction_type}</td>
-                        <td className="px-6 py-4">{tx.description}</td>
-                        <td className="px-6 py-4 text-right font-mono font-bold">
-                          ${parseFloat(tx.amount).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
+          </div>
+        )}
 
-          {activeTab === "team" && <TeamPermissionsWidget ownerEmail={user?.email || "admin@vaultcore.us"} />}
-        </main>
-      </div>
-
-      <SupportChatWidget userEmail={user?.email || "Client"} />
+        {activeTab === "team" && <TeamPermissionsWidget ownerEmail={user?.email || "admin@vaultcore.us"} />}
+      </main>
     </div>
-  );
+
+    <SupportChatWidget userEmail={user?.email || "Client"} />
+  </div>
+);
 }
