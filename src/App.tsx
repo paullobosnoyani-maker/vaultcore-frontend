@@ -196,7 +196,7 @@ export default function App() {
           <div className="flex items-center justify-between px-2 mb-8">
             <div className="flex items-center gap-2.5">
               <img
-                src="/logo.png"
+                src="/logo.jpg"
                 alt="VaultCore US"
                 className="w-8 h-8 rounded-lg object-contain bg-[#090D16] p-0.5 border border-white/10"
               />
