@@ -43,7 +43,7 @@ export default function App() {
   const [wireSmsCode, setWireSmsCode] = useState("");
   const [wireOtpSent, setWireOtpSent] = useState(false);
   const [sendingWireOtp, setSendingWireOtp] = useState(false);
-
+  const [wireTransferMode, setWireTransferMode] = useState<"account" | "email">("account");
   const fetchDashboard = async () => {
     if (!token || !user?.id) return;
     setLoading(true);
@@ -524,73 +524,137 @@ export default function App() {
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <BeneficiariesWidget />
-                  <form onSubmit={submitMemberTransfer} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-bold text-slate-950">Instant VaultCore Member Wire</h2>
-                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      SMS 2FA Protected
-                    </span>
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={memberEmail}
-                    onChange={(e) => setMemberEmail(e.target.value)}
-                    placeholder="Recipient 12-Digit Account # (88...) or Email"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"
-                  />
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="1"
-                    required
-                    value={memberAmount}
-                    onChange={(e) => setMemberAmount(e.target.value)}
-                    placeholder="Amount (USD)"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"
-                  />
+              <form onSubmit={submitMemberTransfer} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+               <div className="flex items-center justify-between">
+                 <h2 className="text-sm font-bold text-slate-950">Instant VaultCore Member Wire</h2>
+                 <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                   SMS 2FA Protected
+                 </span>
+               </div>
 
-                  {!wireOtpSent ? (
-                    <button
-                      type="button"
-                      disabled={sendingWireOtp}
-                      onClick={requestWireSms}
-                      className="w-full bg-rose-800 hover:bg-rose-900 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
-                    >
-                      {sendingWireOtp ? "Sending SMS Code..." : "Send 6-Digit SMS Verification Code"}
-                    </button>
-                  ) : (
-                    <div className="space-y-3">
-                      <input
-                        type="text"
-                        maxLength={6}
-                        required
-                        value={wireSmsCode}
-                        onChange={(e) => setWireSmsCode(e.target.value.replace(/\D/g, ""))}
-                        placeholder="Enter 6-Digit SMS OTP Code"
-                        className="w-full bg-slate-50 border border-emerald-400 rounded-xl px-3 py-2 text-xs font-mono tracking-widest text-center"
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={requestWireSms}
-                          className="px-3 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold cursor-pointer"
-                        >
-                          Resend SMS
-                        </button>
-                        <button
-                          type="submit"
-                          className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
-                        >
-                          Verify SMS &amp; Settle Wire
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </form>
-              </div>
-            </div>
-          )}
+               {/* Dedicated Mode Toggle: 12-Digit Account Number vs Member Email */}
+               <div className="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                 <button
+                   type="button"
+                   onClick={() => {
+                     setWireTransferMode("account");
+                     setMemberEmail("");
+                     setWireOtpSent(false);
+                     setWireSmsCode("");
+                   }}
+                   className={`py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                     wireTransferMode === "account"
+                       ? "bg-slate-950 text-white shadow-xs"
+                       : "text-slate-600 hover:text-slate-900"
+                   }`}
+                 >
+                   Account Number
+                 </button>
+                 <button
+                   type="button"
+                   onClick={() => {
+                     setWireTransferMode("email");
+                     setMemberEmail("");
+                     setWireOtpSent(false);
+                     setWireSmsCode("");
+                   }}
+                   className={`py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                     wireTransferMode === "email"
+                       ? "bg-slate-950 text-white shadow-xs"
+                       : "text-slate-600 hover:text-slate-900"
+                   }`}
+                 >
+                   Member Email
+                 </button>
+               </div>
+
+               {wireTransferMode === "account" ? (
+                 <div>
+                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                     Recipient 12-Digit VaultCore Account Number
+                   </label>
+                   <input
+                     type="text"
+                     inputMode="numeric"
+                     maxLength={12}
+                     required
+                     value={memberEmail}
+                     onChange={(e) => setMemberEmail(e.target.value.replace(/\D/g, ""))}
+                     placeholder="e.g. 884920194821"
+                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono tracking-wider"
+                   />
+                 </div>
+               ) : (
+                 <div>
+                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                     Recipient Registered Email Address
+                   </label>
+                   <input
+                     type="email"
+                     required
+                     value={memberEmail}
+                     onChange={(e) => setMemberEmail(e.target.value)}
+                     placeholder="e.g. treasury@company.com"
+                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"
+                   />
+                 </div>
+               )}
+
+               <div>
+                 <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                   Wire Amount (USD)
+                 </label>
+                 <input
+                   type="number"
+                   step="0.01"
+                   min="1"
+                   required
+                   value={memberAmount}
+                   onChange={(e) => setMemberAmount(e.target.value)}
+                   placeholder="0.00"
+                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono"
+                 />
+               </div>
+
+               {!wireOtpSent ? (
+                 <button
+                   type="button"
+                   disabled={sendingWireOtp}
+                   onClick={requestWireSms}
+                   className="w-full bg-rose-800 hover:bg-rose-900 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
+                 >
+                   {sendingWireOtp ? "Sending SMS Code..." : "Send 6-Digit SMS Verification Code"}
+                 </button>
+               ) : (
+                 <div className="space-y-3">
+                   <input
+                     type="text"
+                     maxLength={6}
+                     required
+                     value={wireSmsCode}
+                     onChange={(e) => setWireSmsCode(e.target.value.replace(/\D/g, ""))}
+                     placeholder="Enter 6-Digit SMS OTP Code"
+                     className="w-full bg-slate-50 border border-emerald-400 rounded-xl px-3 py-2 text-xs font-mono tracking-widest text-center"
+                   />
+                   <div className="flex gap-2">
+                     <button
+                       type="button"
+                       onClick={requestWireSms}
+                       className="px-3 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold cursor-pointer"
+                     >
+                       Resend SMS
+                     </button>
+                     <button
+                       type="submit"
+                       className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
+                     >
+                       Verify SMS &amp; Settle Wire
+                     </button>
+                   </div>
+                 </div>
+               )}
+             </form>
+
 
           {activeTab === "cards" && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
