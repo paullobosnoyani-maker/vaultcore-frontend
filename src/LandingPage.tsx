@@ -66,7 +66,7 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
 
       <div className="flex items-center gap-3 cursor-pointer" onClick={() => { navigateTo("home"); setActiveMenu(null); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
   <img
-    src="/logo.png"
+    src="/logo.jpg"
     alt="VaultCore US"
     className="w-9 h-9 rounded-lg object-contain bg-[#111827] p-0.5 ring-1 ring-amber-500/30 shadow-md"
   />
