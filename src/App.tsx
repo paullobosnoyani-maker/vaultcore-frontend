@@ -40,6 +40,9 @@ export default function App() {
   const [memberEmail, setMemberEmail] = useState("");
   const [memberAmount, setMemberAmount] = useState("");
   const [actionMessage, setActionMessage] = useState("");
+  const [wireSmsCode, setWireSmsCode] = useState("");
+  const [wireOtpSent, setWireOtpSent] = useState(false);
+  const [sendingWireOtp, setSendingWireOtp] = useState(false);
 
   const fetchDashboard = async () => {
     if (!token || !user?.id) return;
@@ -107,6 +110,36 @@ export default function App() {
       setActionMessage(`Error: ${err.message}`);
     }
   };
+     const requestWireSms = async () => {
+    setActionMessage("");
+    if (!memberEmail || !memberAmount) {
+      setActionMessage("Error: Enter recipient 12-digit account number (or email) and amount first.");
+      return;
+    }
+    setSendingWireOtp(true);
+    try {
+      const res = await fetch(`${API_URL}/wire-sms-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          senderUserId: user.id,
+          recipientIdentifier: memberEmail,
+          amount: parseFloat(memberAmount),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setWireOtpSent(true);
+      setActionMessage(data.message);
+    } catch (err: any) {
+      setActionMessage(`Error: ${err.message}`);
+    } finally {
+      setSendingWireOtp(false);
+    }
+  };
 
   const submitMemberTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +153,8 @@ export default function App() {
         },
         body: JSON.stringify({
           senderUserId: user.id,
-          recipientEmail: memberEmail,
+          recipientIdentifier: memberEmail,
+          smsCode: wireSmsCode,
           amount: parseFloat(memberAmount),
         }),
       });
@@ -129,7 +163,13 @@ export default function App() {
       setActionMessage(data.message);
       setMemberEmail("");
       setMemberAmount("");
+      setWireSmsCode("");
+      setWireOtpSent(false);
       fetchDashboard();
+    } catch (err: any) {
+      setActionMessage(`Error: ${err.message}`);
+    }
+  };
     } catch (err: any) {
       setActionMessage(`Error: ${err.message}`);
     }
@@ -488,14 +528,19 @@ export default function App() {
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <BeneficiariesWidget />
-                <form onSubmit={submitMemberTransfer} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-                  <h2 className="text-sm font-bold text-slate-950">Instant VaultCore Member Wire</h2>
+                  <form onSubmit={submitMemberTransfer} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-bold text-slate-950">Instant VaultCore Member Wire</h2>
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      SMS 2FA Protected
+                    </span>
+                  </div>
                   <input
-                    type="email"
+                    type="text"
                     required
                     value={memberEmail}
                     onChange={(e) => setMemberEmail(e.target.value)}
-                    placeholder="Recipient Member Email"
+                    placeholder="Recipient 12-Digit Account # (88...) or Email"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"
                   />
                   <input
@@ -508,12 +553,44 @@ export default function App() {
                     placeholder="Amount (USD)"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"
                   />
-                  <button
-                    type="submit"
-                    className="w-full bg-slate-900 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
-                  >
-                    Send Instant Member Wire
-                  </button>
+
+                  {!wireOtpSent ? (
+                    <button
+                      type="button"
+                      disabled={sendingWireOtp}
+                      onClick={requestWireSms}
+                      className="w-full bg-rose-800 hover:bg-rose-900 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
+                    >
+                      {sendingWireOtp ? "Sending SMS Code..." : "Send 6-Digit SMS Verification Code"}
+                    </button>
+                  ) : (
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        maxLength={6}
+                        required
+                        value={wireSmsCode}
+                        onChange={(e) => setWireSmsCode(e.target.value.replace(/\D/g, ""))}
+                        placeholder="Enter 6-Digit SMS OTP Code"
+                        className="w-full bg-slate-50 border border-emerald-400 rounded-xl px-3 py-2 text-xs font-mono tracking-widest text-center"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={requestWireSms}
+                          className="px-3 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold cursor-pointer"
+                        >
+                          Resend SMS
+                        </button>
+                        <button
+                          type="submit"
+                          className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs cursor-pointer"
+                        >
+                          Verify SMS &amp; Settle Wire
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
@@ -574,4 +651,3 @@ export default function App() {
     </div>
   );
 }
-
