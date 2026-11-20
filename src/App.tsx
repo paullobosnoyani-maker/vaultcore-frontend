@@ -170,11 +170,7 @@ export default function App() {
       setActionMessage(`Error: ${err.message}`);
     }
   };
-    } catch (err: any) {
-      setActionMessage(`Error: ${err.message}`);
-    }
-  };
-
+   
   if (!token) {
     if (!showAuth) {
       return (
