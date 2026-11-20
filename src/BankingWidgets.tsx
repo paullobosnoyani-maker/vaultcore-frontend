@@ -228,3 +228,82 @@ export function SupportChatWidget({ userEmail }: { userEmail: string }) {
     e.preventDefault();
     if (!input.trim()) return;
     const userMsg = { sender: "user", text: input, time: "Just now" };
+    setMessages((prev) => [...prev, userMsg]);
+    const q = input.toLowerCase();
+    setInput("");
+
+    setTimeout(() => {
+      let reply =
+        "A dedicated US Treasury Specialist has received your inquiry (#VC-8492) and will follow up within 5 minutes. Is there an urgent wire reference you would like us to prioritize?";
+      if (q.includes("ach") || q.includes("withdraw") || q.includes("wire")) {
+        reply =
+          "Domestic US ACH payouts submitted before 4:00 PM EST settle same-day via Fedwire/ACH. Standard outgoing ACH transfers carry $0 fees.";
+      } else if (q.includes("grant") || q.includes("loan") || q.includes("kyc")) {
+        reply =
+          "Grant & Capital applications are underwritten within 24 business hours once your US SSN/EIN verification is complete. Approved funds disburse directly to your Grant & Loan Reserve.";
+      } else if (q.includes("card") || q.includes("limit")) {
+        reply =
+          "Your VaultCore Commercial Visa carries a $25,000.00 monthly spend limit and can be frozen or un-frozen instantly from your Overview screen.";
+      }
+      setMessages((prev) => [...prev, { sender: "agent", text: reply, time: "Just now" }]);
+    }, 600);
+  };
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50">
+      {!open ? (
+        <button
+          onClick={() => setOpen(true)}
+          className="flex items-center gap-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-5 py-3.5 rounded-full shadow-2xl transition cursor-pointer"
+        >
+          <Headphones className="w-5 h-5" />
+          <span className="text-sm">24/7 Treasury Support</span>
+        </button>
+      ) : (
+        <div className="w-80 sm:w-96 bg-[#0D1322] border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3.5 flex items-center justify-between text-slate-950">
+            <div className="flex items-center gap-2 font-bold text-sm">
+              <MessageSquare className="w-4 h-4" />
+              <span>VaultCore US Concierge</span>
+            </div>
+            <button onClick={() => setOpen(false)} className="hover:bg-black/10 p-1 rounded-lg cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="p-4 h-72 overflow-y-auto space-y-3 bg-[#070B14]">
+            {messages.map((m, idx) => (
+              <div key={idx} className={`flex flex-col ${m.sender === "user" ? "items-end" : "items-start"}`}>
+                <div
+                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
+                    m.sender === "user"
+                      ? "bg-emerald-500 text-slate-950 font-medium"
+                      : "bg-[#0D1322] border border-slate-800 text-slate-200"
+                  }`}
+                >
+                  {m.text}
+                </div>
+                <span className="text-[10px] text-slate-500 mt-1 px-1">
+                  {m.sender === "user" ? "You" : "US Treasury Desk"} • {m.time}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <form onSubmit={sendMessage} className="p-3 bg-[#0D1322] border-t border-slate-800 flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about ACH, cards, grants..."
+              className="flex-1 bg-[#070B14] border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500"
+            />
+            <button type="submit" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 p-2 rounded-xl cursor-pointer">
+              <Send className="w-4 h-4" />
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
