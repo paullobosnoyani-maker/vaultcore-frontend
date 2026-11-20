@@ -99,7 +99,7 @@ export function StatementExportWidget({
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
-    const logoUrl = `${window.location.origin}/logo.png`;
+    const logoUrl = `${window.location.origin}/logo.jpg`;
     const entityName = user?.business_name || user?.full_name || user?.email || "Commercial Client";
     const entityEmail = user?.email || "N/A";
     const kycStatus = user?.kyc_status || "VERIFIED";
