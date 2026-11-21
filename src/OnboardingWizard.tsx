@@ -381,3 +381,337 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                           className={`p-3.5 rounded-xl border text-left transition cursor-pointer ${
                             accountCategory === "business"
                               ? "bg-rose-50/80 border-rose-700 text-rose-950 shadow-2xs"
+                              : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 font-bold text-xs mb-0.5">
+                            <Building2 className="w-4 h-4 text-rose-800" />
+                            <span>Business / Commercial</span>
+                          </div>
+                          <div className="text-[11px] text-slate-500">
+                            Business Checkings, Business Savings &amp; Reserve
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          {accountCategory === "personal" ? "Personal Email Address *" : "Work Email Address *"}
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder={accountCategory === "personal" ? "alex.morgan@gmail.com" : "alex@acmeusa.com"}
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Create Password *
+                        </label>
+                        <input
+                          type="password"
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Min. 8 characters"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                        />
+                      </div>
+                    </div>
+
+                    {accountCategory === "business" && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">
+                            Legal Business / Entity Name *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={businessName}
+                            onChange={(e) => setBusinessName(e.target.value)}
+                            placeholder="Acme Logistics LLC"
+                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">
+                            US Entity Structure *
+                          </label>
+                           setEntityType(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                          >
+                            <option value="LLC">Limited Liability Company (LLC)</option>
+                            <option value="C-Corp">Delaware / US C-Corporation</option>
+                            <option value="S-Corp">S-Corporation</option>
+                            <option value="Sole Prop">Individual / Sole Proprietorship</option>
+                          </select>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="pt-4 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!email || !password) {
+                            setError("Please fill in your email address and password.");
+                            return;
+                          }
+                          if (accountCategory === "business" && !businessName) {
+                            setError("Please enter your legal business name.");
+                            return;
+                          }
+                          setError("");
+                          setStep(2);
+                        }}
+                        className="flex items-center gap-2 bg-rose-800 hover:bg-rose-900 text-white font-semibold px-6 py-3 rounded-xl text-sm cursor-pointer"
+                      >
+                        <span>Continue to Personal Details</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {step === 2 && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        {accountCategory === "personal"
+                          ? "Legal Full Name *"
+                          : "Authorized Signer Legal Full Name *"}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="As shown on US Passport, State ID, or Driver License"
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Date of Birth (DOB) *
+                        </label>
+                        <input
+                          type="date"
+                          required
+                          min="1920-01-01"
+                          max={maxDobDate}
+                          value={dob}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const yearPart = val.split("-")[0] || "";
+                            if (yearPart.length <= 4) setDob(val);
+                          }}
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Mobile Phone Number *
+                        </label>
+                        <input
+                          type="tel"
+                          inputMode="tel"
+                          required
+                          maxLength={17}
+                          value={phone}
+                          onChange={(e) => {
+                            const cleaned = e.target.value.replace(/[^\d+\s()-]/g, "");
+                            setPhone(cleaned);
+                          }}
+                          placeholder="+1 (212) 555-0194"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono focus:outline-none focus:border-rose-800"
+                        />
+                      </div>
+                    </div>
+                    <div className="pt-4 flex justify-between">
+                      <button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="text-sm font-semibold text-slate-600 hover:text-slate-950 px-4 py-2 cursor-pointer"
+                      >
+                        &larr; Back
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!fullName || !dob || !phone) {
+                            setError("Please enter your legal full name, date of birth, and mobile phone number.");
+                            return;
+                          }
+                          const parts = dob.split("-");
+                          const year = parseInt(parts[0] || "0", 10);
+                          const maxYear = new Date().getFullYear() - 18;
+                          if (parts[0]?.length !== 4 || year < 1920 || year > maxYear) {
+                            setError(`Please enter a valid 4-digit birth year between 1920 and ${maxYear} (must be 18+).`);
+                            return;
+                          }
+                          const phoneDigits = phone.replace(/\D/g, "");
+                          if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+                            setError("Please enter a valid mobile phone number (10 to 15 digits).");
+                            return;
+                          }
+                          setError("");
+                          setStep(3);
+                        }}
+                        className="flex items-center gap-2 bg-rose-800 hover:bg-rose-900 text-white font-semibold px-6 py-3 rounded-xl text-sm cursor-pointer"
+                      >
+                        <span>
+                        <span>
+                          {accountCategory === "personal" ? "Continue to Address & SSN" : "Continue to Address & EIN"}
+                        </span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {step === 3 && (
+                  <form onSubmit={handleRegisterSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        {accountCategory === "personal"
+                          ? "Residential Street Address (No P.O. Boxes) *"
+                          : "US Street Address (No P.O. Boxes) *"}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={streetAddress}
+                        onChange={(e) => setStreetAddress(e.target.value)}
+                        placeholder="350 Fifth Avenue, Apt 4B"
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">City *</label>
+                        <input
+                          type="text"
+                          required
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="New York"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">State *</label>
+                        <select
+                          value={usState}
+                          onChange={(e) => setUsState(e.target.value)}
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                        >
+                          {US_STATES.map((st) => (
+                            <option key={st} value={st}>
+                              {st}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">ZIP Code *</label>
+                        <input
+                          type="text"
+                          required
+                          maxLength={10}
+                          value={zipCode}
+                          onChange={(e) => setZipCode(e.target.value)}
+                          placeholder="10118"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono focus:outline-none focus:border-rose-800"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        {accountCategory === "personal"
+                          ? "Social Security Number (SSN) *"
+                          : "IRS Employer Identification Number (EIN) *"}
+                      </label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        required
+                        maxLength={accountCategory === "personal" ? 11 : 10}
+                        value={einOrSsn}
+                        onChange={(e) => {
+                          const digits = e.target.value.replace(/\D/g, "").slice(0, 9);
+                          if (accountCategory === "personal") {
+                            if (digits.length <= 3) setEinOrSsn(digits);
+                            else if (digits.length <= 5) setEinOrSsn(`${digits.slice(0, 3)}-${digits.slice(3)}`);
+                            else setEinOrSsn(`${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5)}`);
+                          } else {
+                            if (digits.length <= 2) setEinOrSsn(digits);
+                            else setEinOrSsn(`${digits.slice(0, 2)}-${digits.slice(2)}`);
+                          }
+                        }}
+                        placeholder={accountCategory === "personal" ? "XXX-XX-XXXX" : "XX-XXXXXXX"}
+                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono focus:outline-none focus:border-rose-800"
+                      />
+                    </div>
+                    <label className="flex items-start gap-2.5 text-xs text-slate-600 pt-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={certified}
+                        onChange={(e) => setCertified(e.target.checked)}
+                        className="mt-0.5 accent-rose-800"
+                      />
+                      <span>
+                        Under penalties of perjury, I certify that the{" "}
+                        {accountCategory === "personal" ? "Social Security Number (SSN)" : "IRS EIN"}, Date of Birth, and
+                        physical address provided are accurate and authorize VaultCore US and Evolve Bank &amp; Trust
+                        to verify my identity.
+                      </span>
+                    </label>
+                    <div className="pt-4 flex justify-between items-center">
+                      <button
+                        type="button"
+                        onClick={() => setStep(2)}
+                        className="text-sm font-semibold text-slate-600 hover:text-slate-950 px-4 py-2 cursor-pointer"
+                      >
+                        &larr; Back
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="flex items-center gap-2 bg-rose-800 hover:bg-rose-900 text-white font-semibold px-7 py-3 rounded-xl text-sm shadow-md transition cursor-pointer"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>{loading ? "Provisioning Accounts..." : "Submit Application & Open Account"}</span>
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            )}
+
+            <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+              <button
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setError("");
+                  setStep(1);
+                }}
+                className="text-xs font-semibold text-rose-800 hover:underline cursor-pointer"
+              >
+                {isLogin
+                  ? "Don't have a VaultCore US account? Start 3-Step Application →"
+                  : "Already have an account? Sign In to Account →"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
