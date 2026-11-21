@@ -47,6 +47,10 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
   const [einOrSsn, setEinOrSsn] = useState("");
   const [certified, setCertified] = useState(false);
 
+  const maxDobDate = new Date(new Date().setFullYear(new Date().getFullYear() - 18))
+    .toISOString()
+    .split("T")[0];
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -75,8 +79,17 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const taxDigits = einOrSsn.replace(/\D/g, "");
+    if (taxDigits.length !== 9) {
+      setError(
+        accountCategory === "personal"
+          ? "Please enter a valid 9-digit Social Security Number (XXX-XX-XXXX)."
+          : "Please enter a valid 9-digit IRS EIN (XX-XXXXXXX)."
+      );
+      return;
+    }
     if (!certified) {
-      setError("Please certify that your personal identity and US tax details are accurate.");
+      setError("Please certify that your identity and US tax details are accurate.");
       return;
     }
     setError("");
@@ -84,7 +97,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
     try {
       const resolvedBusinessName =
         accountCategory === "personal"
-          ? `${fullName} (Personal Checking)`
+          ? `${fullName} (Personal Checkings)`
           : businessName
           ? `${businessName} (${entityType})`
           : fullName;
@@ -104,6 +117,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
           zipCode,
           businessName: resolvedBusinessName,
           einOrSsn,
+          accountCategory,
         }),
       });
       const data = await res.json();
@@ -190,7 +204,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                 </h1>
                 <p className="text-xs text-slate-400">
                   {isLogin
-                    ? "Access your personal or commercial checking, cards & reserve"
+                    ? "Access your personal or business checkings, savings & cards"
                     : "Complete US CIP & KYC onboarding in 3 quick steps"}
                 </p>
               </div>
@@ -305,7 +319,11 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                       icon: accountCategory === "personal" ? User : Building2,
                     },
                     { num: 2, label: "Personal Details", icon: UserCheck },
-                    { num: 3, label: "Address & SSN", icon: MapPin },
+                    {
+                      num: 3,
+                      label: accountCategory === "personal" ? "Address & SSN" : "Address & EIN",
+                      icon: MapPin,
+                    },
                   ].map((s) => {
                     const Icon = s.icon;
                     const active = step >= s.num;
@@ -336,7 +354,10 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                       <div className="grid grid-cols-2 gap-3">
                         <button
                           type="button"
-                          onClick={() => setAccountCategory("personal")}
+                          onClick={() => {
+                            setAccountCategory("personal");
+                            setEinOrSsn("");
+                          }}
                           className={`p-3.5 rounded-xl border text-left transition cursor-pointer ${
                             accountCategory === "personal"
                               ? "bg-rose-50/80 border-rose-700 text-rose-950 shadow-2xs"
@@ -348,207 +369,15 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                             <span>Personal Account</span>
                           </div>
                           <div className="text-[11px] text-slate-500">
-                            Individual Checking, Savings &amp; Visa Card
+                            Personal Checkings, Personal Savings &amp; Visa Card
                           </div>
                         </button>
                         <button
                           type="button"
-                          onClick={() => setAccountCategory("business")}
+                          onClick={() => {
+                            setAccountCategory("business");
+                            setEinOrSsn("");
+                          }}
                           className={`p-3.5 rounded-xl border text-left transition cursor-pointer ${
                             accountCategory === "business"
                               ? "bg-rose-50/80 border-rose-700 text-rose-950 shadow-2xs"
-                              : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 font-bold text-xs mb-0.5">
-                            <Building2 className="w-4 h-4 text-rose-800" />
-                            <span>Business / Commercial</span>
-                          </div>
-                          <div className="text-[11px] text-slate-500">
-                            LLC, C-Corp, S-Corp &amp; Treasury Reserve
-                          </div>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          {accountCategory === "personal" ? "Personal Email Address *" : "Work Email Address *"}
-                        </label>
-                        <input
-                          type="email"
-                          required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder={accountCategory === "personal" ? "alex.morgan@gmail.com" : "alex@acmeusa.com"}
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          Create Password *
-                        </label>
-                        <input
-                          type="password"
-                          required
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          placeholder="Min. 8 characters"
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
-                        />
-                      </div>
-                    </div>
-
-                    {accountCategory === "business" && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">
-                            Legal Business / Entity Name *
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            value={businessName}
-                            onChange={(e) => setBusinessName(e.target.value)}
-                            placeholder="Acme Logistics LLC"
-                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">
-                            US Entity Structure *
-                          </label>
-                           onChange={(e) => setEntityType(e.target.value)}
-                           className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
-                          >
-                            <option value="LLC">Limited Liability Company (LLC)</option>
-                            <option value="C-Corp">Delaware / US C-Corporation</option>
-                            <option value="S-Corp">S-Corporation</option>
-                            <option value="Sole Prop">Individual / Sole Proprietorship</option>
-                          </select>
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="pt-4 flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!email || !password) {
-                            setError("Please fill in your email address and password.");
-                            return;
-                          }
-                          if (accountCategory === "business" && !businessName) {
-                            setError("Please enter your legal business name.");
-                            return;
-                          }
-                          setError("");
-                          setStep(2);
-                        }}
-                        className="flex items-center gap-2 bg-rose-800 hover:bg-rose-900 text-white font-semibold px-6 py-3 rounded-xl text-sm cursor-pointer"
-                      >
-                        <span>Continue to Personal Details</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {step === 2 && (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        {accountCategory === "personal"
-                          ? "Legal Full Name *"
-                          : "Authorized Signer Legal Full Name *"}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder="As shown on US Passport, State ID, or Driver License"
-                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          Date of Birth (DOB) *
-                        </label>
-                        <input
-                          type="date"
-                          required
-                          value={dob}
-                          onChange={(e) => setDob(e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          Mobile Phone Number *
-                        </label>
-                        <input
-                          type="tel"
-                          required
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="+1 (212) 555-0194"
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
-                        />
-                      </div>
-                    </div>
-                    <div className="pt-4 flex justify-between">
-                      <button
-                        type="button"
-                        onClick={() => setStep(1)}
-                        className="text-sm font-semibold text-slate-600 hover:text-slate-950 px-4 py-2 cursor-pointer"
-                      >
-                        &larr; Back
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!fullName || !dob || !phone) {
-                            setError("Please enter your legal full name, date of birth, and phone number.");
-                            return;
-                          }
-                          setError("");
-                          setStep(3);
-                        }}
-                        className="flex items-center gap-2 bg-rose-800 hover:bg-rose-900 text-white font-semibold px-6 py-3 rounded-xl text-sm cursor-pointer"
-                      >
-                        <span>Continue to Address &amp; SSN</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {step === 3 && (
-                  <form onSubmit={handleRegisterSubmit} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        {accountCategory === "personal"
-                          ? "Residential Street Address (No P.O. Boxes) *"
-                          : "US Street Address (No P.O. Boxes) *"}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={streetAddress}
-                        onChange={(e) => setStreetAddress(e.target.value)}
-                        placeholder="350 Fifth Avenue, Apt 4B"
-                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">City *</label>
-                        <input
-                          type="text"
-                          required
-                          value={city}
-                          onChange={(e) => setCity(e.target.value)}
-                          placeholder="New York"
