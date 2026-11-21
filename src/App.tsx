@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   Wallet, LogOut, RefreshCw,
   LayoutDashboard, ArrowLeftRight, Landmark, FileText, TrendingUp,
-  AlertCircle, CreditCard, Users, Building2, Menu, X
+  AlertCircle, CreditCard, Users, Building2, Menu, X, Eye, EyeOff
 } from "lucide-react";
 import { StripeDepositCard } from "./StripeDepositCard";
 import { AchWithdrawalCard } from "./AchWithdrawalCard";
@@ -44,6 +44,8 @@ export default function App() {
   const [wireOtpSent, setWireOtpSent] = useState(false);
   const [sendingWireOtp, setSendingWireOtp] = useState(false);
   const [wireTransferMode, setWireTransferMode] = useState<"account" | "email">("account");
+  const [showBalance, setShowBalance] = useState(true);
+
   const fetchDashboard = async () => {
     if (!token || !user?.id) return;
     setLoading(true);
@@ -66,7 +68,6 @@ export default function App() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     if (token && user?.id) fetchDashboard();
   }, [token, user?.id]);
@@ -354,16 +355,27 @@ export default function App() {
   </div>
 )}
 
-          {activeTab === "overview" && (
+         {activeTab === "overview" && (
             <>
               <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xs">
                 <div>
-                  <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase mb-1">
+                  <div className="flex items-center gap-2.5 text-slate-500 text-xs font-semibold uppercase mb-1">
                     <TrendingUp className="w-4 h-4 text-rose-800" />
                     <span>Total VaultCore US Balance (USD)</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowBalance(!showBalance)}
+                      className="inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded-md text-[11px] font-semibold normal-case transition cursor-pointer"
+                      title={showBalance ? "Hide Balances" : "Show Balances"}
+                    >
+                      {showBalance ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{showBalance ? "Hide" : "Show"}</span>
+                    </button>
                   </div>
                   <div className="text-3xl md:text-4xl font-bold text-slate-950 font-mono">
-                    ${totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {showBalance
+                      ? `$${totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      : "••••••••••"}
                   </div>
                   <div className="text-xs text-slate-500 mt-1">
                     Custodial accounts held at FDIC-insured partner banks &bull; ABA 021000021
@@ -401,7 +413,9 @@ export default function App() {
                         <Wallet className="w-4 h-4 text-rose-800" />
                       </div>
                       <div className="text-2xl font-bold text-slate-950 font-mono">
-                        ${parseFloat(w.balance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        {showBalance
+                          ? `$${parseFloat(w.balance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                          : "••••••••"}
                       </div>
                       <div className="mt-3 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div className="h-full bg-rose-800 rounded-full" style={{ width: `${pct}%` }} />
