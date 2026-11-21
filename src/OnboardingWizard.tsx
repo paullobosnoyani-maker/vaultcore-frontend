@@ -570,7 +570,6 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                         className="flex items-center gap-2 bg-rose-800 hover:bg-rose-900 text-white font-semibold px-6 py-3 rounded-xl text-sm cursor-pointer"
                       >
                         <span>
-                        <span>
                           {accountCategory === "personal" ? "Continue to Address & SSN" : "Continue to Address & EIN"}
                         </span>
                         <ArrowRight className="w-4 h-4" />
