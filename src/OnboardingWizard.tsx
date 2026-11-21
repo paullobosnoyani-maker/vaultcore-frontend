@@ -419,8 +419,8 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                           <label className="block text-xs font-semibold text-slate-700 mb-1">
                             US Entity Structure *
                           </label>
-                           setEntityType(e.target.value)}
-                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                           onChange={(e) => setEntityType(e.target.value)}
+                           className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
                           >
                             <option value="LLC">Limited Liability Company (LLC)</option>
                             <option value="C-Corp">Delaware / US C-Corporation</option>
