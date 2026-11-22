@@ -400,7 +400,11 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                             setAccountCategory("business");
                             setEinOrSsn("");
                           }}
-                                                : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
+                                className={`p-3.5 rounded-xl border text-left transition cursor-pointer ${
+                            accountCategory === "business"
+                              ? "bg-rose-50/80 border-rose-700 text-rose-950 shadow-2xs"
+
+                          : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
                           }`}
                         >
                           <div className="flex items-center gap-2 font-bold text-xs mb-0.5">
