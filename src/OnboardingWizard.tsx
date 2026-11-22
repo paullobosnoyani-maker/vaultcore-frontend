@@ -20,6 +20,15 @@ const US_STATES = [
   "Virginia","Washington","West Virginia","Wisconsin","Wyoming"
 ];
 
+const SECURITY_QUESTIONS = [
+  "What was the name of your first elementary school?",
+  "In what city or town was your first full-time job?",
+  "What is the middle name of your oldest sibling?",
+  "What was the make and model of your first car?",
+  "What street did you grow up on as a child?",
+  "What is your maternal grandmother's maiden name?"
+];
+
 export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }: Props) {
   const [isLogin, setIsLogin] = useState(initialLoginMode);
   const [accountCategory, setAccountCategory] = useState<"personal" | "business">("personal");
@@ -45,11 +54,11 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
   const [usState, setUsState] = useState("New York");
   const [zipCode, setZipCode] = useState("");
   const [einOrSsn, setEinOrSsn] = useState("");
+  const [securityQuestion1, setSecurityQuestion1] = useState(SECURITY_QUESTIONS[0]);
+  const [securityAnswer1, setSecurityAnswer1] = useState("");
+  const [securityQuestion2, setSecurityQuestion2] = useState(SECURITY_QUESTIONS[1]);
+  const [securityAnswer2, setSecurityAnswer2] = useState("");
   const [certified, setCertified] = useState(false);
-
-  const maxDobDate = new Date(new Date().setFullYear(new Date().getFullYear() - 18))
-    .toISOString()
-    .split("T")[0];
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,6 +97,14 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
       );
       return;
     }
+    if (!securityAnswer1.trim() || !securityAnswer2.trim()) {
+      setError("Please answer both security questions to protect your account.");
+      return;
+    }
+    if (securityQuestion1 === securityQuestion2) {
+      setError("Please choose two different security questions.");
+      return;
+    }
     if (!certified) {
       setError("Please certify that your identity and US tax details are accurate.");
       return;
@@ -95,6 +112,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
     setError("");
     setLoading(true);
     try {
+      const isoDob = `${dob.slice(6, 10)}-${dob.slice(0, 2)}-${dob.slice(3, 5)}`;
       const resolvedBusinessName =
         accountCategory === "personal"
           ? `${fullName} (Personal Checkings)`
@@ -110,7 +128,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
           password,
           fullName,
           phone,
-          dob,
+          dob: isoDob,
           streetAddress,
           city,
           usState,
@@ -118,6 +136,10 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
           businessName: resolvedBusinessName,
           einOrSsn,
           accountCategory,
+          securityQuestion1,
+          securityAnswer1,
+          securityQuestion2,
+          securityAnswer2,
         }),
       });
       const data = await res.json();
@@ -321,7 +343,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                     { num: 2, label: "Personal Details", icon: UserCheck },
                     {
                       num: 3,
-                      label: accountCategory === "personal" ? "Address & SSN" : "Address & EIN",
+                      label: accountCategory === "personal" ? "Address, SSN & 2FA" : "Address, EIN & 2FA",
                       icon: MapPin,
                     },
                   ].map((s) => {
@@ -378,10 +400,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                             setAccountCategory("business");
                             setEinOrSsn("");
                           }}
-                          className={`p-3.5 rounded-xl border text-left transition cursor-pointer ${
-                            accountCategory === "business"
-                              ? "bg-rose-50/80 border-rose-700 text-rose-950 shadow-2xs"
-                              : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
+                                                : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
                           }`}
                         >
                           <div className="flex items-center gap-2 font-bold text-xs mb-0.5">
@@ -443,8 +462,6 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                           <label className="block text-xs font-semibold text-slate-700 mb-1">
                             US Entity Structure *
                           </label>
-                          <select value={entityType}
-                            onChange={(e) =>
                            setEntityType(e.target.value)}
                             className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
                           >
@@ -465,7 +482,6 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                             setError("Please fill in your email address and password.");
                             return;
                           }
-                          
                           if (accountCategory === "business" && !businessName) {
                             setError("Please enter your legal business name.");
                             return;
@@ -481,8 +497,10 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                     </div>
                   </div>
                 )}
-
-                {step === 2 && (
+                        className={`p-3.5 rounded-xl border text-left transition cursor-pointer ${
+                            accountCategory === "business"
+                              ? "bg-rose-50/80 border-rose-700 text-rose-950 shadow-2xs"
+                       {step === 2 && (
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -502,20 +520,22 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          Date of Birth (DOB) *
+                          Date of Birth (MM/DD/YYYY) *
                         </label>
                         <input
-                          type="date"
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={10}
                           required
-                          min="1920-01-01"
-                          max={maxDobDate}
                           value={dob}
                           onChange={(e) => {
-                            const val = e.target.value;
-                            const yearPart = val.split("-")[0] || "";
-                            if (yearPart.length <= 4) setDob(val);
+                            const d = e.target.value.replace(/\D/g, "").slice(0, 8);
+                            if (d.length <= 2) setDob(d);
+                            else if (d.length <= 4) setDob(`${d.slice(0, 2)}/${d.slice(2)}`);
+                            else setDob(`${d.slice(0, 2)}/${d.slice(2, 4)}/${d.slice(4)}`);
                           }}
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                          placeholder="04/12/1990"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono focus:outline-none focus:border-rose-800"
                         />
                       </div>
                       <div>
@@ -552,11 +572,13 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                             setError("Please enter your legal full name, date of birth, and mobile phone number.");
                             return;
                           }
-                          const parts = dob.split("-");
-                          const year = parseInt(parts[0] || "0", 10);
+                          const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dob);
+                          const month = match ? parseInt(match, 10) : 0;
+                          const day = match ? parseInt(match, 10) : 0;
+                          const year = match ? parseInt(match, 10) : 0;
                           const maxYear = new Date().getFullYear() - 18;
-                          if (parts[0]?.length !== 4 || year < 1920 || year > maxYear) {
-                            setError(`Please enter a valid 4-digit birth year between 1920 and ${maxYear} (must be 18+).`);
+                          if (!match || month < 1 || month > 12 || day < 1 || day > 31 || year < 1920 || year > maxYear) {
+                            setError(`Enter a valid date of birth (MM/DD/YYYY) with birth year between 1920 and ${maxYear}.`);
                             return;
                           }
                           const phoneDigits = phone.replace(/\D/g, "");
@@ -661,6 +683,65 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                         className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono focus:outline-none focus:border-rose-800"
                       />
                     </div>
+
+                    <div className="pt-2 border-t border-slate-100 space-y-3">
+                      <div className="text-xs font-bold text-slate-800">Account Recovery Security Questions *</div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[11px] font-semibold text-slate-600 mb-1">Security Question 1</label>
+                          <select
+                            value={securityQuestion1}
+                            onChange={(e) => setSecurityQuestion1(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-rose-800"
+                          >
+                            {SECURITY_QUESTIONS.map((q) => (
+                              <option key={q} value={q}>
+                                {q}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-semibold text-slate-600 mb-1">Answer 1 *</label>
+                          <input
+                            type="text"
+                            required
+                            value={securityAnswer1}
+                            onChange={(e) => setSecurityAnswer1(e.target.value)}
+                            placeholder="Your secret answer"
+                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-rose-800"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[11px] font-semibold text-slate-600 mb-1">Security Question 2</label>
+                          <select
+                            value={securityQuestion2}
+                            onChange={(e) => setSecurityQuestion2(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-rose-800"
+                          >
+                            {SECURITY_QUESTIONS.map((q) => (
+                              <option key={q} value={q}>
+                                {q}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-semibold text-slate-600 mb-1">Answer 2 *</label>
+                          <input
+                            type="text"
+                            required
+                            value={securityAnswer2}
+                            onChange={(e) => setSecurityAnswer2(e.target.value)}
+                            placeholder="Your secret answer"
+                            className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-rose-800"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
                     <label className="flex items-start gap-2.5 text-xs text-slate-600 pt-2 cursor-pointer">
                       <input
                         type="checkbox"
