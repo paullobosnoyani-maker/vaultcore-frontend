@@ -205,6 +205,63 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
     } finally {
       setLoading(false);
     }
+      };
+  const handleInitiateReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setResetSuccess("");
+    setLoading(true);
+    try {
+      const res = await fetch((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/users/forgot-password/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Unable to find account");
+      setResetQ1(data.securityQuestion1 || null);
+      setResetQ2(data.securityQuestion2 || null);
+      setOtpMessage(data.message || "6-digit reset code sent to your email.");
+      setResetStep(2);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCompleteReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/users/forgot-password/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          code: resetCode,
+          answer1: resetA1,
+          answer2: resetA2,
+          newPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Password reset failed");
+      setForgotMode(false);
+      setResetStep(1);
+      setResetCode("");
+      setResetA1("");
+      setResetA2("");
+      setNewPassword("");
+      setResetSuccess(data.message || "Password updated! Please sign in with your new password.");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   };
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-slate-900 flex flex-col">
