@@ -497,22 +497,21 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                         }}
                         className="flex items-center gap-2 bg-rose-800 hover:bg-rose-900 text-white font-semibold px-6 py-3 rounded-xl text-sm cursor-pointer"
                       >
-                        <span>Continue to Personal Details</span>
+                                              <span>Continue to Personal Details</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
                 )}
-                        className={`p-3.5 rounded-xl border text-left transition cursor-pointer ${
-                            accountCategory === "business"
-                              ? "bg-rose-50/80 border-rose-700 text-rose-950 shadow-2xs"
-                       {step === 2 && (
+
+                {step === 2 && (
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
                         {accountCategory === "personal"
                           ? "Legal Full Name *"
                           : "Authorized Signer Legal Full Name *"}
+
                       </label>
                       <input
                         type="text"
