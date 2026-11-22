@@ -578,9 +578,10 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                             return;
                           }
                           const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dob);
-                          const month = match ? parseInt(match, 10) : 0;
-                          const day = match ? parseInt(match, 10) : 0;
-                          const year = match ? parseInt(match, 10) : 0;
+                         const month = match ? parseInt(match.at(1) || "0", 10) : 0;
+                         const day = match ? parseInt(match.at(2) || "0", 10) : 0;
+                         const year = match ? parseInt(match.at(3) || "0", 10) : 0;
+
                           const maxYear = new Date().getFullYear() - 18;
                           if (!match || month < 1 || month > 12 || day < 1 || day > 31 || year < 1920 || year > maxYear) {
                             setError(`Enter a valid date of birth (MM/DD/YYYY) with birth year between 1920 and ${maxYear}.`);
