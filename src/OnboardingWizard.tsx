@@ -39,6 +39,15 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
   const [otpCode, setOtpCode] = useState("");
   const [otpPurpose, setOtpPurpose] = useState<"SIGNUP" | "LOGIN">("LOGIN");
   const [otpMessage, setOtpMessage] = useState("");
+  const [forgotMode, setForgotMode] = useState(false);
+  const [resetStep, setResetStep] = useState<1 | 2>(1);
+  const [resetQ1, setResetQ1] = useState<string | null>(null);
+  const [resetQ2, setResetQ2] = useState<string | null>(null);
+  const [resetA1, setResetA1] = useState("");
+  const [resetA2, setResetA2] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [resetSuccess, setResetSuccess] = useState("");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -212,6 +221,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
           <span>256-Bit TLS Encrypted &bull; USA PATRIOT Act CIP Compliant</span>
         </div>
       </header>
+      
 
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="max-w-2xl w-full bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden">
@@ -295,7 +305,109 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                   </button>
                 </div>
               </form>
-            ) : isLogin ? (
+                         ) : forgotMode ? (
+              resetStep === 1 ? (
+                <form onSubmit={handleInitiateReset} className="space-y-5 max-w-md mx-auto">
+                  <div className="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+                    Enter your registered VaultCore US email address. We will send a 6-digit recovery code and prompt your security questions.
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                      Registered Email Address
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-800"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-rose-800 hover:bg-rose-900 text-white font-semibold py-3.5 rounded-xl text-sm transition cursor-pointer"
+                  >
+                    {loading ? "Sending Recovery Code..." : "Send 6-Digit Recovery Code"}
+                  </button>
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => { setForgotMode(false); setError(""); }}
+                      className="text-xs font-semibold text-slate-600 hover:text-rose-800 underline cursor-pointer"
+                    >
+                      &larr; Back to Sign In
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleCompleteReset} className="space-y-4 max-w-md mx-auto">
+                  <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-3.5 text-xs font-medium">
+                    {otpMessage}
+                  </div>
+                  {resetQ1 && resetQ2 && (
+                    <>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{resetQ1}</label>
+                        <input
+                          type="text"
+                          required
+                          value={resetA1}
+                          onChange={(e) => setResetA1(e.target.value)}
+                          placeholder="Your answer"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">{resetQ2}</label>
+                        <input
+                          type="text"
+                          required
+                          value={resetA2}
+                          onChange={(e) => setResetA2(e.target.value)}
+                          placeholder="Your answer"
+                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                        />
+                      </div>
+                    </>
+                  )}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">6-Digit Email Recovery Code *</label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      required
+                      value={resetCode}
+                      onChange={(e) => setResetCode(e.target.value.replace(/\D/g, ""))}
+                      placeholder="123456"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono tracking-widest focus:outline-none focus:border-rose-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">New Password (Min. 8 Characters) *</label>
+                    <input
+                      type="password"
+                      required
+                      minLength={8}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-rose-800 hover:bg-rose-900 text-white font-semibold py-3.5 rounded-xl text-sm transition cursor-pointer"
+                  >
+                    {loading ? "Updating Password..." : "Verify & Reset Password"}
+                  </button>
+                </form>
+             )
+              ) : isLogin ? (
+                
               <form onSubmit={handleLogin} className="space-y-5 max-w-md mx-auto">
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
@@ -311,9 +423,19 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                    Password
-                  </label>
+                <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                      Password
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => { setForgotMode(true); setResetStep(1); setError(""); setResetSuccess(""); }}
+                      className="text-xs font-semibold text-rose-800 hover:underline cursor-pointer"
+                    >
+                      Forgot Password?
+                    </button>
+                  </div>
+
                   <input
                     type="password"
                     required
