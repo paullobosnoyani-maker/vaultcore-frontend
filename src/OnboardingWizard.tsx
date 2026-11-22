@@ -262,7 +262,6 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
     }
   };
 
-  };
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-slate-900 flex flex-col">
       <header className="bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between">
