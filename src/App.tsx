@@ -723,12 +723,13 @@ export default function App() {
                   {activeTab === "team" && <TeamPermissionsWidget ownerEmail={user?.email || "admin@vaultcore.us"} />}
     </main>
   </div>
-  <SupportChatWidget
-    userEmail={user?.email || "Client"}
-    wallets={wallets}
-    recentTransactions={transactions}
-    virtualAccountNumber={virtualAccountNumber}
-  />
+        <SupportChatWidget
+        userEmail={user?.email || "Client"}
+        wallets={wallets}
+        recentTransactions={transactions}
+        virtualAccountNumber={user?.accountNumber || user?.virtualAccountNumber || ""}
+      />
+
 </div>
 );
 }
