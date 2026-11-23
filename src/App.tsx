@@ -719,7 +719,8 @@ export default function App() {
           </div>
         )}
 
-              {activeTab === "team" && <TeamPermissionsWidget ownerEmail={user?.email || "admin@vaultcore.us"} />}
+                      {activeTab === "team" && <TeamPermissionsWidget ownerEmail={user?.email || "admin@vaultcore.us"} />}
+      </div>
     </main>
     <SupportChatWidget
       userEmail={user?.email || "Client"}
@@ -730,4 +731,3 @@ export default function App() {
   </div>
 );
 }
-
