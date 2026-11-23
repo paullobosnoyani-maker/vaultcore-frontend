@@ -323,11 +323,11 @@ export function SupportChatWidget({
           <div className="p-4 h-72 overflow-y-auto space-y-3 bg-[#070B14]">
             {messages.map((m, idx) => (
               <div key={idx} className={`flex flex-col ${m.sender === "user" ? "items-end" : "items-start"}`}>
-                <div
-                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
+           <div
+                  className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed whitespace-pre-line ${
                     m.sender === "user"
                       ? "bg-emerald-500 text-slate-950 font-medium"
-                      : "bg-[#0D1322] border border-slate-800 text-slate-200"
+                      : "bg-[#081322] border border-slate-800 text-slate-200"
                   }`}
                 >
                   {m.text}
@@ -339,13 +339,13 @@ export function SupportChatWidget({
             ))}
           </div>
 
-          <form onSubmit={sendMessage} className="p-3 bg-[#0D1322] border-t border-slate-800 flex gap-2">
+          <form onSubmit={sendMessage} className="p-3 bg-[#061322] border-t border-slate-800 flex gap-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about ACH, cards, grants..."
-              className="flex-1 bg-[#070B14] border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500"
+              placeholder="Ask about balance, last 5 transactions..."
+              className="flex-1 bg-[#070f1d] border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500"
             />
             <button type="submit" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 p-2 rounded-xl cursor-pointer">
               <Send className="w-4 h-4" />
@@ -356,3 +356,4 @@ export function SupportChatWidget({
     </div>
   );
 }
+
