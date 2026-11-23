@@ -723,7 +723,9 @@ export default function App() {
       </main>
     </div>
 
-    <SupportChatWidget userEmail={user?.email || "Client"} />
-  </div>
-);
-}
+          <SupportChatWidget
+        userEmail={user?.email || "Client"}
+        wallets={wallets}
+        recentTransactions={transactions}
+        virtualAccountNumber={virtualAccountNumber}
+      />
