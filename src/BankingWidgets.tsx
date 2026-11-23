@@ -224,8 +224,18 @@ export function SupportChatWidget({
   recentTransactions?: any[];
   virtualAccountNumber?: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([
+    {
+      sender: "agent",
+      text: `Welcome to VaultCore US Private Treasury Desk (${userEmail}). Ask me about your balance, last 5 transactions, routing numbers, or sweep yield.`,
+      time: "Online",
+    },
+  ]);
 
   const sendMessage = (e: React.FormEvent) => {
+
     e.preventDefault();
     if (!input.trim()) return;
     const userMsg = { sender: "user", text: input, time: "Just now" };
