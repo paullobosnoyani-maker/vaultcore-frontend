@@ -213,16 +213,17 @@ export function ScheduledBillsWidget() {
   );
 }
 
-export function SupportChatWidget({ userEmail }: { userEmail: string }) {
-  const [open, setOpen] = useState(false);
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      sender: "agent",
-      text: `Welcome to VaultCore US Private Desk, ${userEmail}. How can our New York treasury team assist you with ACH wires, corporate cards, or grant underwriting today?`,
-      time: "Just now",
-    },
-  ]);
+export function SupportChatWidget({
+  userEmail,
+  wallets = [],
+  recentTransactions = [],
+  virtualAccountNumber = "",
+}: {
+  userEmail: string;
+  wallets?: any[];
+  recentTransactions?: any[];
+  virtualAccountNumber?: string;
+}) {
 
   const sendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -232,22 +233,68 @@ export function SupportChatWidget({ userEmail }: { userEmail: string }) {
     const q = input.toLowerCase();
     setInput("");
 
-    setTimeout(() => {
-      let reply =
-        "A dedicated US Treasury Specialist has received your inquiry (#VC-8492) and will follow up within 5 minutes. Is there an urgent wire reference you would like us to prioritize?";
-      if (q.includes("ach") || q.includes("withdraw") || q.includes("wire")) {
-        reply =
-          "Domestic US ACH payouts submitted before 4:00 PM EST settle same-day via Fedwire/ACH. Standard outgoing ACH transfers carry $0 fees.";
+        setTimeout(() => {
+      const fmt = (n: number) =>
+        n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+      const totalUsd = wallets.reduce((sum: number, w: any) => sum + parseFloat(w.balance || "0"), 0);
+
+      let reply = `I have live access to your VaultCore US profile (${userEmail}). Try asking:\n• "What is my balance?"\n• "Show my last 5 transactions"\n• "What is my routing & account number?"\n• "What is my monthly sweep yield?"`;
+
+      if (
+        q.includes("balance") ||
+        q.includes("how much") ||
+        q.includes("money") ||
+        q.includes("total") ||
+        q.includes("wallet")
+      ) {
+        if (wallets.length === 0) {
+          reply = "No active accounts loaded yet. Click Sync at the top right to refresh your ledger.";
+        } else {
+          const breakdown = wallets
+            .map((w: any) => `• ${w.account_name}: ${fmt(parseFloat(w.balance || "0"))}`)
+            .join("\n");
+          reply = `Your total VaultCore US liquidity is ${fmt(totalUsd)} USD:\n\n${breakdown}`;
+        }
+      } else if (
+        q.includes("transaction") ||
+        q.includes("history") ||
+        q.includes("recent") ||
+        q.includes("last 5") ||
+        q.includes("statement") ||
+        q.includes("activity")
+      ) {
+        const last5 = recentTransactions.slice(0, 5);
+        if (last5.length === 0) {
+          reply = "You have no settled transactions on your ledger yet.";
+        } else {
+          const list = last5
+            .map((tx: any, idx: number) => {
+              const amt = parseFloat(tx.amount || "0");
+              const sign = amt >= 0 ? "+" : "-";
+              const date = tx.created_at
+                ? new Date(tx.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+                : "Settled";
+              return `${idx + 1}. ${tx.description || tx.transaction_type} (${date}): ${sign}${fmt(Math.abs(amt))}`;
+            })
+            .join("\n");
+          reply = `Here are your ${last5.length} most recent settled transactions:\n\n${list}`;
+        }
+      } else if (q.includes("routing") || q.includes("aba") || q.includes("account number")) {
+        reply = `Your VaultCore US domestic ACH & Fedwire credentials:\n• ABA Routing Number: 021000021\n• Virtual Account Number: ${virtualAccountNumber || "See Accounts & Routing"}\n• Custodial Bank: JPMorgan Chase / VaultCore US`;
+      } else if (q.includes("yield") || q.includes("fdic") || q.includes("sweep")) {
+        const monthlyYield = (totalUsd * 0.0485) / 12;
+        reply = `Your USD deposits are swept across FDIC-insured partner banks up to $2,500,000 coverage, earning an estimated ${fmt(monthlyYield)}/mo at 4.85% APY.`;
+      } else if (q.includes("ach") || q.includes("withdraw") || q.includes("wire")) {
+        reply = "Domestic US ACH payouts submitted before 4:00 PM EST settle same-day via Fedwire/ACH. Standard outgoing ACH transfers carry $0 fees.";
       } else if (q.includes("grant") || q.includes("loan") || q.includes("kyc")) {
-        reply =
-          "Grant & Capital applications are underwritten within 24 business hours once your US SSN/EIN verification is complete. Approved funds disburse directly to your Grant & Loan Reserve.";
+        reply = "Grant & Capital applications are underwritten within 24 business hours once your US SSN/EIN verification is complete. Approved funds disburse directly to your Grant & Loan Reserve.";
       } else if (q.includes("card") || q.includes("limit")) {
-        reply =
-          "Your VaultCore Commercial Visa carries a $25,000.00 monthly spend limit and can be frozen or un-frozen instantly from your Overview screen.";
+        reply = "Your VaultCore Commercial Visa carries a $25,000.00 monthly spend limit and can be frozen or un-frozen instantly from your Overview screen.";
       }
+
       setMessages((prev) => [...prev, { sender: "agent", text: reply, time: "Just now" }]);
-    }, 600);
-  };
+    }, 500);
+
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
