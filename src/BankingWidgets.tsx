@@ -355,5 +355,5 @@ export function SupportChatWidget({
       )}
     </div>
   );
+ }
 }
-
