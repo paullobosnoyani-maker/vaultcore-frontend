@@ -296,7 +296,7 @@ export function SupportChatWidget({
 
       setMessages((prev) => [...prev, { sender: "agent", text: reply, time: "Just now" }]);
     }, 500);
-
+  };
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
@@ -356,4 +356,4 @@ export function SupportChatWidget({
     </div>
   );
  }
-}
+
