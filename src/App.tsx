@@ -346,16 +346,17 @@ export default function App() {
         <div className="bg-[#111827] border border-emerald-500/40 text-emerald-300 px-4 py-3 rounded-xl text-xs font-semibold flex items-center justify-between gap-3 shadow-md">
         <span>{actionMessage}</span>
         <button
-      type="button"
-      onClick={() => setActionMessage("")}
-      className="text-slate-400 hover:text-white text-sm font-bold cursor-pointer"
-    >
-      ×
-    </button>
-  </div>
-)}
+                   type="button"
+              onClick={() => setActionMessage("")}
+              className="text-slate-400 hover:text-white text-sm font-bold cursor-pointer"
+            >
+              ×
+            </button>
+          </div>
+        )}
 
-         {activeTab === "overview" && (
+        {activeTab === "overview" && (
+
             <>
               <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-2xs">
                 <div>
