@@ -255,6 +255,7 @@ export function SupportChatWidget({
             .join("\n");
           reply = `Your total VaultCore US liquidity is ${fmt(totalUsd)} USD:\n\n${breakdown}`;
         }
+      }
       } else if (
         q.includes("transaction") ||
         q.includes("history") ||
