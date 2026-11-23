@@ -253,10 +253,11 @@ export function SupportChatWidget({
           const breakdown = wallets
             .map((w: any) => `• ${w.account_name}: ${fmt(parseFloat(w.balance || "0"))}`)
             .join("\n");
-          reply = `Your total VaultCore US liquidity is ${fmt(totalUsd)} USD:\n\n${breakdown}`;
+                reply = `Your total VaultCore US liquidity is ${fmt(totalUsd)} USD:\n\n${breakdown}`;
         }
-      }
-      } else if (
+         } else if (
+
+
         q.includes("transaction") ||
         q.includes("history") ||
         q.includes("recent") ||
