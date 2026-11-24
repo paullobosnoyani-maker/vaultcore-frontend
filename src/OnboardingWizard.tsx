@@ -441,7 +441,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                         </div>
                         <div>
                           <label className="block text-xs font-semibold text-slate-700 mb-1">Entity Structure *</label>
-                           setEntityType(e.target.value)} className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800">
+                            setEntityType(e.target.value)} className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800">
                             <option value="LLC">LLC</option>
                             <option value="C-Corp">C-Corp</option>
                             <option value="S-Corp">S-Corp</option>
