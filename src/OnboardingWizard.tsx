@@ -708,7 +708,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                          <select>
                          value={entityType}
                           onChange={e => 
-                          setEntityType(e.target.value)
+                          setEntityType(e.target.value)}
                                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
                               >
 
