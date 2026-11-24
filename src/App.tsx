@@ -38,6 +38,8 @@ export default function App() {
   const [receiverId, setReceiverId] = useState("");
   const [transferAmount, setTransferAmount] = useState("");
   const [memberEmail, setMemberEmail] = useState("");
+  const [memberRecipientName, setMemberRecipientName] = useState("");
+  const [memberRoutingNumber, setMemberRoutingNumber] = useState("021000021");
   const [memberAmount, setMemberAmount] = useState("");
   const [actionMessage, setActionMessage] = useState("");
   const [wireSmsCode, setWireSmsCode] = useState("");
@@ -142,7 +144,7 @@ export default function App() {
     }
   };
 
-  const submitMemberTransfer = async (e: React.FormEvent) => {
+     const submitMemberTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
     setActionMessage("");
     try {
@@ -155,6 +157,8 @@ export default function App() {
         body: JSON.stringify({
           senderUserId: user.id,
           recipientIdentifier: memberEmail,
+          recipientName: memberRecipientName.trim(),
+          routingNumber: memberRoutingNumber.trim(),
           smsCode: wireSmsCode,
           amount: parseFloat(memberAmount),
         }),
@@ -163,6 +167,8 @@ export default function App() {
       if (!res.ok) throw new Error(data.error);
       setActionMessage(data.message);
       setMemberEmail("");
+      setMemberRecipientName("");
+      setMemberRoutingNumber("021000021");
       setMemberAmount("");
       setWireSmsCode("");
       setWireOtpSent(false);
@@ -581,6 +587,36 @@ export default function App() {
                  >
                    Member Email
                  </button>
+               </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                 <div>
+                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                     Beneficiary Legal / Business Name *
+                   </label>
+                   <input
+                     type="text"
+                     required
+                     value={memberRecipientName}
+                     onChange={(e) => setMemberRecipientName(e.target.value)}
+                     placeholder="e.g. Acme Global Holdings LLC"
+                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                     ABA Routing Number (9 Digits) *
+                   </label>
+                   <input
+                     type="text"
+                     inputMode="numeric"
+                     maxLength={9}
+                     required
+                     value={memberRoutingNumber}
+                     onChange={(e) => setMemberRoutingNumber(e.target.value.replace(/\D/g, "").slice(0, 9))}
+                     placeholder="021000021"
+                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono tracking-wider"
+                   />
+                 </div>
                </div>
 
                {wireTransferMode === "account" ? (
