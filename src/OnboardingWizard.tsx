@@ -511,10 +511,63 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
                       className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-rose-800"
                     />
                   </div>
-                  <button
-                    type="submit"
-                    disabled={loading}
-              <div>
+             <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-rose-800 hover:bg-rose-900 text-white font-semibold py-3.5 rounded-xl text-sm transition cursor-pointer"
+            >
+              {loading ? "Updating Password..." : "Verify & Reset Password"}
+            </button>
+          </form>
+        )
+      ) : isLogin ? (
+        <form onSubmit={handleLogin} className="space-y-5 max-w-md mx-auto">
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Email Address
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-800"
+            />
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                Password
+              </label>
+              <button
+                type="button"
+                onClick={() => { setForgotMode(true); setResetStep(1); setError(""); setResetSuccess(""); }}
+                className="text-xs font-semibold text-rose-800 hover:underline cursor-pointer"
+              >
+                Forgot Password?
+              </button>
+            </div>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-rose-800"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-rose-800 hover:bg-rose-900 text-white font-semibold py-3.5 rounded-xl text-sm transition cursor-pointer"
+          >
+            {loading ? "Authenticating..." : "Sign In to VaultCore US"}
+          </button>
+        </form>
+      ) : (
+        <div>
+
                 <div className="grid grid-cols-3 gap-2 mb-8">
                   {[
                     {
