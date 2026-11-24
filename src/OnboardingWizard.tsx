@@ -684,6 +684,5 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
           </div>
         </div>
       </div>
-    </div>
   );
 }
