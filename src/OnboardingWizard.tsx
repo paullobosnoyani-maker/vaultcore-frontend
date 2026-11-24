@@ -269,7 +269,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
       setLoading(false);
     }
   };
-
+  return (
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="max-w-2xl w-full bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden">
           <div className="bg-slate-950 px-8 py-6 text-white flex items-center justify-between">
