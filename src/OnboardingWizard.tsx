@@ -244,7 +244,7 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
     }
   };
 
-  const handleCompleteReset = async (e: React.FormEvent) => {
+    const handleCompleteReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -256,18 +256,19 @@ export function OnboardingWizard({ initialLoginMode, onBackHome, onSuccessAuth }
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Password reset failed");
-  return (
-    <div className="min-h-screen bg-[#FAFAFA] text-slate-900 flex flex-col">
-      <header className="bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between">
-        <button onClick={onBackHome} className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-rose-800 cursor-pointer">
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to VaultCore US</span>
-        </button>
-        <div className="flex items-center gap-2 text-xs text-slate-500">
-          <Lock className="w-3.5 h-3.5 text-rose-800" />
-          <span>256-Bit TLS Encrypted &bull; USA PATRIOT Act CIP Compliant</span>
-        </div>
-      </header>
+      setForgotMode(false);
+      setResetStep(1);
+      setResetCode("");
+      setResetA1("");
+      setResetA2("");
+      setNewPassword("");
+      setResetSuccess(data.message || "Password updated! Please sign in.");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="max-w-2xl w-full bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden">
