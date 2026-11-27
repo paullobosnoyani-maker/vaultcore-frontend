@@ -36,7 +36,7 @@ const variantIcons: Record<string, React.ReactNode> = {
 function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: string) => void }) {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none">
-      {toasts.map(toast => (
+      {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} onDismiss={onDismiss} />
       ))}
     </div>
@@ -49,7 +49,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
   useEffect(() => {
     if (toast.duration && toast.duration > 0) {
       const interval = setInterval(() => {
-        setProgress(p => Math.max(0, p - (100 / (toast.duration! / 50))));
+        setProgress((p) => Math.max(0, p - 100 / (toast.duration! / 50)));
       }, 50);
       return () => clearInterval(interval);
     }
@@ -58,7 +58,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
   return (
     <div
       className={`pointer-events-auto glass-card p-4 min-w-[300px] max-w-md animate-slide-in ${variantStyles[toast.variant]}`}
-      style={{ "--progress": `${progress}%` }}
+      style={{ "--progress": `${progress}%` } as React.CSSProperties}
     >
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0">{variantIcons[toast.variant]}</div>
@@ -91,17 +91,19 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const toast = useCallback(({ title, description, variant = "default", duration = 5000 }: Omit<Toast, "id">) =
-> {
-    const id = crypto.randomUUID();
-    setToasts(prev => [...prev, { id, title, description, variant, duration }]);
-    if (duration > 0) setTimeout(() => dismiss(id), duration);
-    return id;
+  const dismiss = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const dismiss = useCallback((id: string) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
-  }, []);
+  const toast = useCallback(
+    ({ title, description, variant = "default", duration = 5000 }: Omit<Toast, "id">) => {
+      const id = crypto.randomUUID();
+      setToasts((prev) => [...prev, { id, title, description, variant, duration }]);
+      if (duration > 0) setTimeout(() => dismiss(id), duration);
+      return id;
+    },
+    [dismiss]
+  );
 
   return (
     <ToastContext.Provider value={{ toasts, toast, dismiss }}>
