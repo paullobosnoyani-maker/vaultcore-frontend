@@ -7,10 +7,16 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-stripe': ['@stripe/stripe-js', '@stripe/react-stripe-js'],
-          'vendor-lucide': ['lucide-react'],
-          'vendor-react': ['react', 'react-dom'],
+        manualChunks(id) {
+          if (id.includes('@stripe/stripe-js') || id.includes('@stripe/react-stripe-js')) {
+            return 'vendor-stripe'
+          }
+          if (id.includes('lucide-react')) {
+            return 'vendor-lucide'
+          }
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+            return 'vendor-react'
+          }
         },
       },
     },
