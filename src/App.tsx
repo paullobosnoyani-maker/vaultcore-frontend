@@ -600,7 +600,7 @@ y {
                     onChange={(e) => { setReceiverId(e.target.value); setTransferErrors(prev => ({...prev, receiverId: ""})); }}
                     className={`w-full rounded-xl px-3 py-2.5 text-xs ${transferErrors.receiverId ? "border-rose-500" : ""}`}
                   >
-                    {wallets.map((w) => (
+                            {wallets.map((w) => (
                       <option key={w.id} value={w.id}>
                         To: {w.account_name} (${parseFloat(w.balance || "0").toFixed(2)})
                       </option>
@@ -649,8 +649,7 @@ y {
                 <form onSubmit={submitMemberTransfer} className="glass-card p-6 space-y-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-sm font-bold text-slate-100">Instant VaultCore Member Wire</h2>
-                    <span className="text-[10px] font-bold uppercase px-2 py-0.
-5 rounded bg-emerald-900/30 text-emerald-400 border border-emerald-800/50">
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-900/30 text-emerald-400 border border-emerald-800/50">
                       SMS 2FA Protected
                     </span>
                   </div>
@@ -719,8 +718,7 @@ y {
                         placeholder="021000021"
                         className={`w-full bg-obsidian-elevated border-white/16 text-slate-50 rounded-xl px-3 py-2 text-xs font-mono tracking-wider ${wireErrors.memberRoutingNumber ? "border-rose-500" : ""}`}
                       />
-                      {wireErrors.memberRo
-utingNumber && <p className="text-[11px] text-rose-500 mt-1">{wireErrors.memberRoutingNumber}</p>}
+                      {wireErrors.memberRoutingNumber && <p className="text-[11px] text-rose-500 mt-1">{wireErrors.memberRoutingNumber}</p>}
                     </div>
                   </div>
 
@@ -739,7 +737,8 @@ utingNumber && <p className="text-[11px] text-rose-500 mt-1">{wireErrors.memberR
                         placeholder="e.g. 884920194821"
                         className={`w-full bg-obsidian-elevated border-white/16 text-slate-50 rounded-xl px-3 py-2 text-xs font-mono tracking-wider ${wireErrors.memberEmail ? "border-rose-500" : ""}`}
                       />
-                      {wireErrors.memberEmail && <p className="text-[11px] text-rose-500 mt-1">{wireErrors.memberEmail}</p>}
+
+                                            {wireErrors.memberEmail && <p className="text-[11px] text-rose-500 mt-1">{wireErrors.memberEmail}</p>}
                     </div>
                   ) : (
                     <div>
@@ -787,8 +786,7 @@ utingNumber && <p className="text-[11px] text-rose-500 mt-1">{wireErrors.memberR
                   ) : (
                     <div className="space-y-3">
                       <input
-                        type="text
-"
+                        type="text"
                         maxLength={6}
                         required
                         value={wireSmsCode}
@@ -862,8 +860,7 @@ utingNumber && <p className="text-[11px] text-rose-500 mt-1">{wireErrors.memberR
                       <tr key={tx.id}>
                         <td className="px-6 py-4 font-semibold">{tx.account_name}</td>
                         <td className="px-6 py-4 font-mono text-slate-400">{tx.transaction_type}</td>
-                        <td className="px-6 py-4">{
-tx.description}</td>
+                        <td className="px-6 py-4">{tx.description}</td>
                         <td className="px-6 py-4 text-right font-mono font-bold">
                           ${parseFloat(tx.amount).toFixed(2)}
                         </td>
