@@ -175,8 +175,7 @@ export default function App() {
       setActionMessage(data.message);
     } catch (err: any) {
       setActionMessage(`Error: ${err.message}`);
-    } finall
-y {
+    } finally {
       setSendingWireOtp(false);
     }
   };
