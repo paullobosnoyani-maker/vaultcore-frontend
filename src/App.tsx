@@ -411,8 +411,8 @@ export default function App() {
             </div>
           )}
 
-          {activeTab === "overview" && (
-            {loading ? (
+           {activeTab === "overview" && (
+                 loading ? (
               <>
                 <SkeletonWidget />
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -561,7 +561,7 @@ export default function App() {
                 </div>
 
                 </>
-              )}
+              )
             )}
 
           {activeTab === "accounts" && (
