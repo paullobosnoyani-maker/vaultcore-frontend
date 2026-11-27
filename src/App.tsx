@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import {
   Wallet, LogOut, RefreshCw,
   LayoutDashboard, ArrowLeftRight, Landmark, FileText, TrendingUp,
