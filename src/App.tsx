@@ -392,7 +392,7 @@ export default function App() {
 
           {(actionMessage || backendWarming) && (
             <div className="bg-[#111827] border border-emerald-500/40 text-emerald-300 px-4 py-3 rounded-xl text-xs font-semibold flex items-center justify-between gap-3 shadow-md">
-              <span>{actionMessage || "Waking up backend (Render free tier cold start ~30s)..."}</span>
+             <span>{actionMessage || "Establishing encrypted connection to VaultCore clearing ledger..."}</span>
               <button
                 type="button"
                 onClick={() => setActionMessage("")}
