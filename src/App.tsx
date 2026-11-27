@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Wallet, LogOut, RefreshCw,
   LayoutDashboard, ArrowLeftRight, Landmark, FileText, TrendingUp,
@@ -7,20 +7,12 @@ import {
 import { SkeletonCard, SkeletonWidget, SkeletonTable } from "./components/Skeleton";
 import { LandingPage } from "./LandingPage";
 import { OnboardingWizard } from "./OnboardingWizard";
-
-// Lazy-loaded heavy components
-const StripeDepositCard = lazy(() => import('./StripeDepositCard'))
-const AchWithdrawalCard = lazy(() => import('./AchWithdrawalCard'))
-const FundingPortalCard = lazy(() => import('./FundingPortalCard'))
-const VirtualAccountCard = lazy(() => import('./TreasuryWidgets').then(m => ({ default: m.VirtualAccountCard })))
-const CashFlowChart = lazy(() => import('./TreasuryWidgets').then(m => ({ default: m.CashFlowChart })))
-const VirtualDebitCard = lazy(() => import('./BankingWidgets').then(m => ({ default: m.VirtualDebitCard })))
-const ScheduledBillsWidget = lazy(() => import('./BankingWidgets').then(m => ({ default: m.ScheduledBillsWidget })))
-const FdicSweepWidget = lazy(() => import('./InstitutionalWidgets').then(m => ({ default: m.FdicSweepWidget })))
-const StatementExportWidget = lazy(() => import('./InstitutionalWidgets').then(m => ({ default: m.StatementExportWidget })))
-const BeneficiariesWidget = lazy(() => import('./InstitutionalWidgets').then(m => ({ default: m.BeneficiariesWidget })))
-const TeamPermissionsWidget = lazy(() => import('./InstitutionalWidgets').then(m => ({ default: m.TeamPermissionsWidget })))
-const SupportChatWidget = lazy(() => import('./BankingWidgets').then(m => ({ default: m.SupportChatWidget })))
+import { StripeDepositCard } from "./StripeDepositCard";
+import { AchWithdrawalCard } from "./AchWithdrawalCard";
+import { FundingPortalCard } from "./FundingPortalCard";
+import { VirtualAccountCard, CashFlowChart } from "./TreasuryWidgets";
+import { VirtualDebitCard, ScheduledBillsWidget, SupportChatWidget } from "./BankingWidgets";
+import { FdicSweepWidget, StatementExportWidget, BeneficiariesWidget, TeamPermissionsWidget } from "./InstitutionalWidgets";
 
 const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/users";
 
