@@ -11,35 +11,11 @@ interface Toast {
   duration?: number;
 }
 
-interface ToastContextType {
+const ToastContext = createContext<{
   toasts: Toast[];
   toast: (props: Omit<Toast, "id">) => string;
   dismiss: (id: string) => void;
-}
-
-const ToastContext = createContext<{ toasts: Toast[]; toast: (props: Omit<Toast, "id">) => string; dismiss: (id: string) => void } | null>(null);
-
-export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([]);
-
-  const toast = useCallback(({ title, description, variant = "default", duration = 5000 }: Omit<Toast, "id">) => {
-    const id = Math.random().toString(36).slice(2, 9);
-    setToasts(prev => [...prev, { id, title, description, variant, duration }]);
-    if (duration > 0) setTimeout(() => dismiss(id), duration);
-    return id;
-  }, []);
-
-  const dismiss = useCallback((id: string) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
-  }, []);
-
-  return (
-    <ToastContext.Provider value={{ toasts, toast, dismiss }}>
-      {children}
-      <ToastContainer toasts={toasts} onDismiss={dismiss} />
-    </ToastContext.Provider>
-  );
-}
+} | null>(null);
 
 const variantStyles: Record<string, string> = {
   default: "bg-obsidian-card border-white/10",
@@ -68,7 +44,7 @@ function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id
 }
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string) => void }) {
-  const [progress, setProgress] = React.useState(100);
+  const [progress, setProgress] = useState(100);
 
   useEffect(() => {
     if (toast.duration && toast.duration > 0) {
@@ -94,8 +70,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
         </div>
         <button
           onClick={() => onDismiss(toast.id)}
-          className="flex-shrink-0 text-slate-400 hover:text-white transition-col
-ors"
+          className="flex-shrink-0 text-slate-400 hover:text-white transition-colors"
           aria-label="Dismiss"
         >
           <X className="w-4 h-4" />
@@ -110,6 +85,29 @@ ors"
         </div>
       )}
     </div>
+  );
+}
+
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const toast = useCallback(({ title, description, variant = "default", duration = 5000 }: Omit<Toast, "id">) =
+> {
+    const id = crypto.randomUUID();
+    setToasts(prev => [...prev, { id, title, description, variant, duration }]);
+    if (duration > 0) setTimeout(() => dismiss(id), duration);
+    return id;
+  }, []);
+
+  const dismiss = useCallback((id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  return (
+    <ToastContext.Provider value={{ toasts, toast, dismiss }}>
+      {children}
+      <ToastContainer toasts={toasts} onDismiss={dismiss} />
+    </ToastContext.Provider>
   );
 }
 
