@@ -98,39 +98,40 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
         {activeMenu && (
           <div className="bg-white text-slate-900 border-t border-slate-200 shadow-2xl">
             <div className="max-w-7xl mx-auto px-6 py-8">
-              {activeMenu === "products" && (
+                {activeMenu === "products" && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="space-y-3">
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Core Treasury</div>
-                    <a href="#banking" onClick={(e) => { e.preventDefault(); navigateTo("banking"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">Business Checking &amp; Sub-Wallets</div><div className="text-xs text-slate-500 mt-0.5">Segregated operating, payroll &amp; tax accounts</div></a>
-                    <a href="#treasury" onClick={(e) => { e.preventDefault(); navigateTo("treasury"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">4.85% APY* Treasury Sweep</div><div className="text-xs text-slate-500 mt-0.5">Variable yield on qualifying idle reserves</div></a>
+                    <button type="button" onClick={() => navigateTo("banking")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">Business Checking &amp; Sub-Wallets</div><div className="text-xs text-slate-500 mt-0.5">Segregated operating, payroll &amp; tax accounts</div></button>
+                    <button type="button" onClick={() => navigateTo("treasury")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">4.85% APY* Treasury Sweep</div><div className="text-xs text-slate-500 mt-0.5">Variable yield on qualifying idle reserves</div></button>
                   </div>
                   <div className="space-y-3">
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Spend &amp; Cards</div>
-                    <a href="#cards" onClick={(e) => { e.preventDefault(); navigateTo("cards"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">Commercial Visa&reg; Cards</div><div className="text-xs text-slate-500 mt-0.5">Titanium &amp; virtual cards with hard spend caps</div></a>
-                    <a href="#banking" onClick={(e) => { e.preventDefault(); navigateTo("banking"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">Same-Day ACH &amp; Fedwire&reg;</div><div className="text-xs text-slate-500 mt-0.5">$0 standard domestic ACH &amp; vendor auto-pay</div></a>
+                    <button type="button" onClick={() => navigateTo("cards")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">Commercial Visa&reg; Cards</div><div className="text-xs text-slate-500 mt-0.5">Titanium &amp; virtual cards with hard spend caps</div></button>
+                    <button type="button" onClick={() => navigateTo("banking")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">Same-Day ACH &amp; Fedwire&reg;</div><div className="text-xs text-slate-500 mt-0.5">$0 standard domestic ACH &amp; vendor auto-pay</div></button>
                   </div>
                   <div className="space-y-3">
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Growth Financing</div>
-                    <a href="#capital" onClick={(e) => { e.preventDefault(); navigateTo("capital"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">US Business Grants &amp; Capital</div><div className="text-xs text-slate-500 mt-0.5">$10K–$250K non-dilutive &amp; working capital lines</div></a>
+                    <button type="button" onClick={() => navigateTo("capital")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">US Business Grants &amp; Capital</div><div className="text-xs text-slate-500 mt-0.5">$10K–$250K non-dilutive &amp; working capital lines</div></button>
                   </div>
                 </div>
               )}
-                            {activeMenu === "solutions" && (
+
+              {activeMenu === "solutions" && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="space-y-3">
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">By Company Size</div>
-                    <button onClick={() => { setActiveMenu(null); navigateTo("solutions"); }} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 cursor-pointer"><div className="font-bold text-sm text-slate-950">Startups &amp; Venture-Backed</div><div className="text-xs text-slate-500 mt-0.5">Extend runway with 4.85% APY* &amp; instant virtual cards</div></button>
-                    <button onClick={() => { setActiveMenu(null); navigateTo("solutions"); }} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 cursor-pointer"><div className="font-bold text-sm text-slate-950">Mid-Sized &amp; Multi-Entity</div><div className="text-xs text-slate-500 mt-0.5">Dual-control approvals &amp; CSV audit statements</div></button>
+                    <button type="button" onClick={() => navigateTo("solutions")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">Startups &amp; Venture-Backed</div><div className="text-xs text-slate-500 mt-0.5">Extend runway with 4.85% APY* &amp; instant virtual cards</div></button>
+                    <button type="button" onClick={() => navigateTo("solutions")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">Mid-Sized &amp; Multi-Entity</div><div className="text-xs text-slate-500 mt-0.5">Dual-control approvals &amp; CSV audit statements</div></button>
                   </div>
                   <div className="space-y-3">
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">By Industry</div>
-                    <a href="#banking" onClick={(e) => { e.preventDefault(); navigateTo("banking"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">Technology &amp; SaaS</div><div className="text-xs text-slate-500 mt-0.5">Cloud infrastructure cards &amp; automated GL tagging</div></a>
-                    <a href="#capital" onClick={(e) => { e.preventDefault(); navigateTo("capital"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">Logistics &amp; Supply Chain</div><div className="text-xs text-slate-500 mt-0.5">High-volume ACH vendor payouts &amp; inventory grants</div></a>
+                    <button type="button" onClick={() => navigateTo("solutions")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">Technology &amp; SaaS</div><div className="text-xs text-slate-500 mt-0.5">Cloud infrastructure cards &amp; automated GL tagging</div></button>
+                    <button type="button" onClick={() => navigateTo("capital")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">Logistics &amp; Supply Chain</div><div className="text-xs text-slate-500 mt-0.5">High-volume ACH vendor payouts &amp; inventory grants</div></button>
                   </div>
                   <div className="space-y-3">
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Accounting &amp; Tax</div>
-                    <button type="button" onMouseEnter={() => setActiveMenu(null)} onClick={() => navigateTo("faq")} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">CPA &amp; Auditor Access</div><div className="text-xs text-slate-500 mt-0.5">Read-only ledger roles &amp; IRS 1099-INT vault</div></button>
+                    <button type="button" onClick={() => navigateTo("solutions")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">CPA &amp; Auditor Access</div><div className="text-xs text-slate-500 mt-0.5">Read-only ledger roles &amp; IRS 1099-INT vault</div></button>
                   </div>
                 </div>
               )}
@@ -139,15 +140,15 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="space-y-3">
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Custody &amp; Coverage</div>
-                    <a href="#infrastructure" onClick={(e) => { e.preventDefault(); navigateTo("infrastructure"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">Partner-Bank Architecture</div><div className="text-xs text-slate-500 mt-0.5">How custodial accounts &amp; $2.5M FDIC sweep work</div></a>
+                    <button type="button" onClick={() => navigateTo("infrastructure")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">Partner-Bank Architecture</div><div className="text-xs text-slate-500 mt-0.5">How custodial accounts &amp; $2.5M FDIC sweep work</div></button>
                   </div>
                   <div className="space-y-3">
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Security &amp; Governance</div>
-                    <a href="#security" onClick={(e) => { e.preventDefault(); navigateTo("security"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">Double-Entry &amp; Encryption</div><div className="text-xs text-slate-500 mt-0.5">AES-256, TLS 1.3 &amp; CIP/BSA compliance controls</div></a>
+                    <button type="button" onClick={() => navigateTo("security")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">Double-Entry &amp; Encryption</div><div className="text-xs text-slate-500 mt-0.5">AES-256, TLS 1.3 &amp; CIP/BSA compliance controls</div></button>
                   </div>
                   <div className="space-y-3">
                     <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Organization</div>
-                    <a href="#company" onClick={(e) => { e.preventDefault(); navigateTo("company"); navigateTo("home"); setActiveMenu(null); window.scrollTo(0, 0); }} className="block p-3 rounded-xl hover:bg-slate-50"><div className="font-bold text-sm text-slate-950">About VaultCore US</div><div className="text-xs text-slate-500 mt-0.5">New York headquarters, mission &amp; advisory desk</div></a>
+                    <button type="button" onClick={() => navigateTo("company")} className="w-full text-left block p-3 rounded-xl hover:bg-slate-50 transition cursor-pointer"><div className="font-bold text-sm text-slate-950">About VaultCore US</div><div className="text-xs text-slate-500 mt-0.5">New York headquarters, mission &amp; advisory desk</div></button>
                   </div>
                 </div>
               )}
@@ -556,8 +557,8 @@ export function LandingPage({ onOpenAuth }: LandingProps) {
               <span>VaultCore Financial Technologies Inc. &bull; New York, NY</span>
             </div>
             <div className="flex flex-wrap gap-6 font-semibold text-slate-600">
-              <a href="#infrastructure" className="hover:text-rose-800">Banking Disclosures</a>
-              <a href="#security" className="hover:text-rose-800">Security &amp; CIP</a>
+              <button type="button" onClick={() => navigateTo("infrastructure")} className="hover:text-rose-800 cursor-pointer">Banking Disclosures</button>
+              <button type="button" onClick={() => navigateTo("security")} className="hover:text-rose-800 cursor-pointer">Security &amp; CIP</button>
               <button type="button" onClick={() => navigateTo("fees")} className="hover:text-rose-800 cursor-pointer">Fee Schedule</button>
               <button type="button" onClick={() => navigateTo("terms")} className="hover:text-rose-800 cursor-pointer">Terms of Service</button>
               <button type="button" onClick={() => navigateTo("privacy")} className="hover:text-rose-800 cursor-pointer">Privacy Policy</button>
